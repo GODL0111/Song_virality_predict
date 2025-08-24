@@ -951,7 +951,7 @@ def main():
     predictor = SongHitPredictor()
 
     # File path
-    file_path = r"/content/data/spotify_tracks.csv"
+    file_path = r"demo.csv"  #<-- Enter your file path
 
     print("🎵 Welcome to the Song Hit Predictor! 🎵")
     print("="*50)
