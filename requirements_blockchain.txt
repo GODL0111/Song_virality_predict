@@ -1,0 +1,12 @@
+web3>=6.0.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+# existing project deps (best-effort copy)
+pandas
+numpy
+scikit-learn
+xgboost
+matplotlib
+seaborn
+joblib
+scipy
