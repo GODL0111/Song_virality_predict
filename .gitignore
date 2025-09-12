@@ -1,0 +1,29 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment files
+.env
+
+# Model files
+models/
+*.pkl
+*.joblib
+
+# Data files (optional, uncomment if needed)
+# datasets/*.csv
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Blockchain/Smart contract compilation artifacts
+out/
+cache/
+artifacts/
+node_modules/
