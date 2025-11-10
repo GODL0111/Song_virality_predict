@@ -1,8 +1,14 @@
 {
-  "name": "song-virality-repo-root",
-  "private": true,
-  "scripts": {
-    "build": "cd frontend && npm ci && npm run build",
-    "start": "cd frontend && npm run preview"
-  }
+  "name": "song-virality-frontend",
+  "version": "0.1.0",
+  "lockfileVersion": 2,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "song-virality-frontend",
+      "version": "0.1.0",
+      "private": true
+    }
+  },
+  "dependencies": {}
 }
