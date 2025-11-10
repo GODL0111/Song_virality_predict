@@ -1,1 +1,137 @@
-import React, {useState} from 'react'\n\nconst DEFAULTS = {\n  danceability: 0.65,\n  energy: 0.72,\n  key: 5,\n  loudness: -6.5,\n  mode: 1,\n  speechiness: 0.08,\n  acousticness: 0.25,\n  instrumentalness: 0.05,\n  liveness: 0.15,\n  valence: 0.58,\n  tempo: 125,\n  duration_ms: 210000\n}\n\n// Simple frontend fallback predictor (weights inspired by feature importance)\nfunction fallbackPredict(features){\n  // normalize some ranges\n  const f = {...features}\n  f.loudness = (f.loudness + 60)/60 // map -60..0 to 0..1\n  f.tempo = Math.min(200, Math.max(30, f.tempo))/200\n  f.duration_ms = Math.min(300000, Math.max(30000, f.duration_ms))/300000\n\n  // weights (toy model)\n  const weights = {\n    danceability: 1.8,\n    energy: 1.6,\n    valence: 1.2,\n    acousticness: -0.8,\n    speechiness: -0.4,\n    instrumentalness: -0.6,\n    liveness: -0.2,\n    loudness: 0.9,\n    tempo: 0.3,\n    duration_ms: 0.2\n  }\n\n  let score = 0\n  score += (f.danceability || 0) * weights.danceability\n  score += (f.energy || 0) * weights.energy\n  score += (f.valence || 0) * weights.valence\n  score += (f.acousticness || 0) * weights.acousticness\n  score += (f.speechiness || 0) * weights.speechiness\n  score += (f.instrumentalness || 0) * weights.instrumentalness\n  score += (f.liveness || 0) * weights.liveness\n  score += (f.loudness || 0) * weights.loudness\n  score += (f.tempo || 0) * weights.tempo\n  score += (f.duration_ms || 0) * weights.duration_ms\n\n  // squash to probability 0..1\n  const prob = 1/(1+Math.exp(- (score - 1.5)))\n  const confidence = Math.min(0.99, Math.max(0.4, Math.abs(score)/4))\n  return {hit_probability: prob, confidence}\n}\n\nexport default function PredictorForm({onResult}){\n  const [form, setForm] = useState(DEFAULTS)\n  const [last, setLast] = useState(null)\n  const [loading, setLoading] = useState(false)\n\n  function update(k,v){\n    setForm(f => ({...f, [k]: v}))\n  }\n\n  async function handleSubmit(e){\n    e.preventDefault()\n    setLoading(true)\n    try{\n      // If API exists, try calling /api/predict (not present by default)\n      let result = null\n      try{\n        const resp = await fetch('/api/predict',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(form)})\n        if(resp.ok){\n          result = await resp.json()\n        }\n      }catch(err){/* ignore - fallback used */}\n\n      if(!result){\n        result = fallbackPredict(form)\n      }\n\n      const payload = {...result, features: form}\n      setLast(payload)\n      onResult && onResult(payload)\n\n      // small celebration when high probability\n      if(payload.hit_probability > 0.75) {\n        fireConfetti()\n      }\n\n    }finally{\n      setLoading(false)\n    }\n  }\n\n  function fireConfetti(){\n    // simple DOM confetti using emojis\n    const c = document.createElement('div')\n    c.className = 'confetti'\n    c.innerText = '✨🎉'\n    document.body.appendChild(c)\n    setTimeout(()=>document.body.removeChild(c),1200)\n  }\n\n  return (\n    <div className="card">\n      <h2>Design your track</h2>\n      <form onSubmit={handleSubmit} className="form-grid">\n        <label>Danceability<input type="range" min="0" max="1" step="0.01" value={form.danceability} onChange={e=>update('danceability',Number(e.target.value))} /></label>\n        <label>Energy<input type="range" min="0" max="1" step="0.01" value={form.energy} onChange={e=>update('energy',Number(e.target.value))} /></label>\n        <label>Valence<input type="range" min="0" max="1" step="0.01" value={form.valence} onChange={e=>update('valence',Number(e.target.value))} /></label>\n        <label>Acousticness<input type="range" min="0" max="1" step="0.01" value={form.acousticness} onChange={e=>update('acousticness',Number(e.target.value))} /></label>\n        <label>Speechiness<input type="range" min="0" max="1" step="0.01" value={form.speechiness} onChange={e=>update('speechiness',Number(e.target.value))} /></label>\n        <label>Instrumentalness<input type="range" min="0" max="1" step="0.01" value={form.instrumentalness} onChange={e=>update('instrumentalness',Number(e.target.value))} /></label>\n        <label>Liveness<input type="range" min="0" max="1" step="0.01" value={form.liveness} onChange={e=>update('liveness',Number(e.target.value))} /></label>\n        <label>Loudness<input type="range" min="-60" max="0" step="0.1" value={form.loudness} onChange={e=>update('loudness',Number(e.target.value))} /></label>\n        <label>Tempo<input type="number" min="30" max="250" value={form.tempo} onChange={e=>update('tempo',Number(e.target.value))} /></label>\n        <label>Duration (ms)<input type="number" min="30000" max="600000" value={form.duration_ms} onChange={e=>update('duration_ms',Number(e.target.value))} /></label>\n\n        <div className="actions">\n          <button type="submit" className="btn primary" disabled={loading}>{loading? 'Analyzing...':'Predict Virality'}</button>\n          <button type="button" className="btn" onClick={()=>setForm(DEFAULTS)}>Reset</button>\n        </div>\n      </form>\n\n      {last && (\n        <div className="result">\n          <h3>Prediction</h3>\n          <p>Hit Probability: <strong>{(last.hit_probability*100).toFixed(1)}%</strong></p>\n          <p>Confidence: {(last.confidence*100).toFixed(0)}%</p>\n        </div>\n      )}      \n    </div>\n  )\n}
+import React, {useState} from 'react'
+
+const DEFAULTS = {
+  danceability: 0.65,
+  energy: 0.72,
+  key: 5,
+  loudness: -6.5,
+  mode: 1,
+  speechiness: 0.08,
+  acousticness: 0.25,
+  instrumentalness: 0.05,
+  liveness: 0.15,
+  valence: 0.58,
+  tempo: 125,
+  duration_ms: 210000
+}
+
+// Simple frontend fallback predictor (weights inspired by feature importance)
+function fallbackPredict(features){
+  // normalize some ranges
+  const f = {...features}
+  f.loudness = (f.loudness + 60)/60 // map -60..0 to 0..1
+  f.tempo = Math.min(200, Math.max(30, f.tempo))/200
+  f.duration_ms = Math.min(300000, Math.max(30000, f.duration_ms))/300000
+
+  // weights (toy model)
+  const weights = {
+    danceability: 1.8,
+    energy: 1.6,
+    valence: 1.2,
+    acousticness: -0.8,
+    speechiness: -0.4,
+    instrumentalness: -0.6,
+    liveness: -0.2,
+    loudness: 0.9,
+    tempo: 0.3,
+    duration_ms: 0.2
+  }
+
+  let score = 0
+  score += (f.danceability || 0) * weights.danceability
+  score += (f.energy || 0) * weights.energy
+  score += (f.valence || 0) * weights.valence
+  score += (f.acousticness || 0) * weights.acousticness
+  score += (f.speechiness || 0) * weights.speechiness
+  score += (f.instrumentalness || 0) * weights.instrumentalness
+  score += (f.liveness || 0) * weights.liveness
+  score += (f.loudness || 0) * weights.loudness
+  score += (f.tempo || 0) * weights.tempo
+  score += (f.duration_ms || 0) * weights.duration_ms
+
+  // squash to probability 0..1
+  const prob = 1/(1+Math.exp(- (score - 1.5)))
+  const confidence = Math.min(0.99, Math.max(0.4, Math.abs(score)/4))
+  return {hit_probability: prob, confidence}
+}
+
+export default function PredictorForm({onResult}){
+  const [form, setForm] = useState(DEFAULTS)
+  const [last, setLast] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  function update(k,v){
+    setForm(f => ({...f, [k]: v}))
+  }
+
+  async function handleSubmit(e){
+    e.preventDefault()
+    setLoading(true)
+    try{
+      // If API exists, try calling /api/predict (not present by default)
+      let result = null
+      try{
+        const resp = await fetch('/api/predict',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(form)})
+        if(resp.ok){
+          result = await resp.json()
+        }
+      }catch(err){/* ignore - fallback used */}
+
+      if(!result){
+        result = fallbackPredict(form)
+      }
+
+      const payload = {...result, features: form}
+      setLast(payload)
+      onResult && onResult(payload)
+
+      // small celebration when high probability
+      if(payload.hit_probability > 0.75) {
+        fireConfetti()
+      }
+
+    }finally{
+      setLoading(false)
+    }
+  }
+
+  function fireConfetti(){
+    // simple DOM confetti using emojis
+    const c = document.createElement('div')
+    c.className = 'confetti'
+    c.innerText = '✨🎉'
+    document.body.appendChild(c)
+    setTimeout(()=>document.body.removeChild(c),1200)
+  }
+
+  return (
+    <div className="card">
+      <h2>Design your track</h2>
+      <form onSubmit={handleSubmit} className="form-grid">
+        <label>Danceability<input type="range" min="0" max="1" step="0.01" value={form.danceability} onChange={e=>update('danceability',Number(e.target.value))} /></label>
+        <label>Energy<input type="range" min="0" max="1" step="0.01" value={form.energy} onChange={e=>update('energy',Number(e.target.value))} /></label>
+        <label>Valence<input type="range" min="0" max="1" step="0.01" value={form.valence} onChange={e=>update('valence',Number(e.target.value))} /></label>
+        <label>Acousticness<input type="range" min="0" max="1" step="0.01" value={form.acousticness} onChange={e=>update('acousticness',Number(e.target.value))} /></label>
+        <label>Speechiness<input type="range" min="0" max="1" step="0.01" value={form.speechiness} onChange={e=>update('speechiness',Number(e.target.value))} /></label>
+        <label>Instrumentalness<input type="range" min="0" max="1" step="0.01" value={form.instrumentalness} onChange={e=>update('instrumentalness',Number(e.target.value))} /></label>
+        <label>Liveness<input type="range" min="0" max="1" step="0.01" value={form.liveness} onChange={e=>update('liveness',Number(e.target.value))} /></label>
+        <label>Loudness<input type="range" min="-60" max="0" step="0.1" value={form.loudness} onChange={e=>update('loudness',Number(e.target.value))} /></label>
+        <label>Tempo<input type="number" min="30" max="250" value={form.tempo} onChange={e=>update('tempo',Number(e.target.value))} /></label>
+        <label>Duration (ms)<input type="number" min="30000" max="600000" value={form.duration_ms} onChange={e=>update('duration_ms',Number(e.target.value))} /></label>
+
+        <div className="actions">
+          <button type="submit" className="btn primary" disabled={loading}>{loading? 'Analyzing...':'Predict Virality'}</button>
+          <button type="button" className="btn" onClick={()=>setForm(DEFAULTS)}>Reset</button>
+        </div>
+      </form>
+
+      {last && (
+        <div className="result">
+          <h3>Prediction</h3>
+          <p>Hit Probability: <strong>{(last.hit_probability*100).toFixed(1)}%</strong></p>
+          <p>Confidence: {(last.confidence*100).toFixed(0)}%</p>
+        </div>
+      )}      
+    </div>
+  )
+}

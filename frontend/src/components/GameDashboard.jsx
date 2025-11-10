@@ -1,1 +1,43 @@
-import React from 'react'\n\nfunction Badge({name, unlocked}){\n  return (\n    <div className={"badge " + (unlocked? 'unlocked':'locked')}>\n      <div className="badge-emoji">{unlocked? '🏆':'🔒'}</div>\n      <div className="badge-name">{name}</div>\n    </div>\n  )\n}\n\nexport default function GameDashboard({score, logs}){\n  const badges = [\n    {name:'First Hit', min:100},\n    {name:'Rising Star', min:500},\n    {name:'Chart Topper', min:1500},\n    {name:'Legend', min:5000}    \n  ]\n\n  return (\n    <aside className="card">\n      <h2>Player Hub</h2>\n      <div className="score">Score: <strong>{score}</strong></div>\n\n      <div className="badges">\n        {badges.map(b=> <Badge key={b.name} name={b.name} unlocked={score>=b.min} />)}\n      </div>\n\n      <div className="log">\n        <h3>Recent Attempts</h3>\n        {logs.length===0? <p>No attempts yet — predict a song to start earning points.</p> : (\n          <ul>\n            {logs.map((l,idx)=>(<li key={idx}><strong>{(l.probability*100).toFixed(1)}%</strong> — +{l.points}pts <span className="muted">{new Date(l.time).toLocaleString()}</span></li>))}\n          </ul>\n        )}     \n      </div>\n\n      <div className="tips card-quiet">\n        Pro Tip: Increase danceability & energy together — it tends to boost virality!\n      </div>\n    </aside>\n  )\n}
+import React from 'react'
+
+function Badge({name, unlocked}){
+  return (
+    <div className={"badge " + (unlocked? 'unlocked':'locked')}>
+      <div className="badge-emoji">{unlocked? '🏆':'🔒'}</div>
+      <div className="badge-name">{name}</div>
+    </div>
+  )
+}
+
+export default function GameDashboard({score, logs}){
+  const badges = [
+    {name:'First Hit', min:100},
+    {name:'Rising Star', min:500},
+    {name:'Chart Topper', min:1500},
+    {name:'Legend', min:5000}    
+  ]
+
+  return (
+    <aside className="card">
+      <h2>Player Hub</h2>
+      <div className="score">Score: <strong>{score}</strong></div>
+
+      <div className="badges">
+        {badges.map(b=> <Badge key={b.name} name={b.name} unlocked={score>=b.min} />)}
+      </div>
+
+      <div className="log">
+        <h3>Recent Attempts</h3>
+        {logs.length===0? <p>No attempts yet — predict a song to start earning points.</p> : (
+          <ul>
+            {logs.map((l,idx)=>(<li key={idx}><strong>{(l.probability*100).toFixed(1)}%</strong> — +{l.points}pts <span className="muted">{new Date(l.time).toLocaleString()}</span></li>))}
+          </ul>
+        )}     
+      </div>
+
+      <div className="tips card-quiet">
+        Pro Tip: Increase danceability & energy together — it tends to boost virality!
+      </div>
+    </aside>
+  )
+}
