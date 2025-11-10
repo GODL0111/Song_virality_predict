@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Song Hit Predictor - Will Your Song Go Viral?</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🎵</span>
+                <span class="logo-text">Hit Predictor</span>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn" data-section="predict">🎤 Predict</button>
+                <button class="nav-btn" data-section="leaderboard">🏆 Top Hits</button>
+                <button class="nav-btn" data-section="learn">📚 Learn</button>
+            </nav>
+            <div class="user-stats">
+                <span class="stat">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="userPoints">0</span>
+                </span>
+                <span class="stat">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-value" id="userLevel">1</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- Hero Section -->
+        <section id="hero-section" class="hero-section active-section">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        Will Your Song <span class="gradient-text">Go Viral?</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Powered by AI & Musical DNA Analysis | 87% Accuracy
+                    </p>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">10K+</div>
+                            <div class="hero-stat-label">Songs Analyzed</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">87%</div>
+                            <div class="hero-stat-label">Accuracy</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">35+</div>
+                            <div class="hero-stat-label">AI Features</div>
+                        </div>
+                    </div>
+                    <button class="cta-button" onclick="startPrediction()">
+                        <span>🚀 Start Predicting</span>
+                        <span class="button-shine"></span>
+                    </button>
+                </div>
+                <div class="hero-visual">
+                    <div class="floating-card card-1">
+                        <span class="card-emoji">🎸</span>
+                        <span class="card-text">Rock</span>
+                    </div>
+                    <div class="floating-card card-2">
+                        <span class="card-emoji">🎹</span>
+                        <span class="card-text">Pop</span>
+                    </div>
+                    <div class="floating-card card-3">
+                        <span class="card-emoji">🎤</span>
+                        <span class="card-text">Hip-Hop</span>
+                    </div>
+                    <div class="floating-card card-4">
+                        <span class="card-emoji">🎧</span>
+                        <span class="card-text">EDM</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prediction Section -->
+        <section id="predict-section" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">🎵 Musical DNA Lab</h2>
+                    <p class="section-subtitle">Adjust the sliders to create your perfect hit song</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="formProgress"></div>
+                    </div>
+                </div>
+
+                <div class="prediction-layout">
+                    <div class="form-container">
+                        <form id="predictionForm">
+                            <!-- Danceability -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">💃</span>
+                                    <span class="label-text">Danceability</span>
+                                    <span class="label-value" id="danceabilityValue">0.50</span>
+                                </div>
+                                <input type="range" class="slider" id="danceability" min="0" max="1" step="0.01" value="0.5">
+                                <div class="slider-labels">
+                                    <span>Calm</span>
+                                    <span>Groovy</span>
+                                </div>
+                                <div class="feature-tip">How suitable for dancing? Pop songs: 0.6-0.8</div>
+                            </div>
+
+                            <!-- Energy -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">⚡</span>
+                                    <span class="label-text">Energy</span>
+                                    <span class="label-value" id="energyValue">0.50</span>
+                                </div>
+                                <input type="range" class="slider" id="energy" min="0" max="1" step="0.01" value="0.5">
+                                <div class="slider-labels">
+                                    <span>Mellow</span>
+                                    <span>Intense</span>
+                                </div>
+                                <div class="feature-tip">Intensity & activity level. Rock/EDM: 0.7-0.9</div>
+                            </div>
+
+                            <!-- Valence -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">😊</span>
+                                    <span class="label-text">Valence (Mood)</span>
+                                    <span class="label-value" id="valenceValue">0.50</span>
+                                </div>
+                                <input type="range" class="slider" id="valence" min="0" max="1" step="0.01" value="0.5">
+                                <div class="slider-labels">
+                                    <span>Sad</span>
+                                    <span>Happy</span>
+                                </div>
+                                <div class="feature-tip">Musical positivity. Happy songs: 0.6-1.0</div>
+                            </div>
+
+                            <!-- Loudness -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">🔊</span>
+                                    <span class="label-text">Loudness</span>
+                                    <span class="label-value" id="loudnessValue">-6.0 dB</span>
+                                </div>
+                                <input type="range" class="slider" id="loudness" min="-60" max="0" step="0.5" value="-6">
+                                <div class="slider-labels">
+                                    <span>Quiet</span>
+                                    <span>Loud</span>
+                                </div>
+                                <div class="feature-tip">Overall volume in dB. Loud songs: -3 to -8 dB</div>
+                            </div>
+
+                            <!-- Speechiness -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">🗣️</span>
+                                    <span class="label-text">Speechiness</span>
+                                    <span class="label-value" id="speechinessValue">0.08</span>
+                                </div>
+                                <input type="range" class="slider" id="speechiness" min="0" max="1" step="0.01" value="0.08">
+                                <div class="slider-labels">
+                                    <span>Instrumental</span>
+                                    <span>Spoken</span>
+                                </div>
+                                <div class="feature-tip">Spoken words present. Songs: 0.03-0.1, Rap: 0.3-0.9</div>
+                            </div>
+
+                            <!-- Acousticness -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">🎸</span>
+                                    <span class="label-text">Acousticness</span>
+                                    <span class="label-value" id="acousticnessValue">0.25</span>
+                                </div>
+                                <input type="range" class="slider" id="acousticness" min="0" max="1" step="0.01" value="0.25">
+                                <div class="slider-labels">
+                                    <span>Electric</span>
+                                    <span>Acoustic</span>
+                                </div>
+                                <div class="feature-tip">Acoustic vs electric. Acoustic: 0.7-1.0</div>
+                            </div>
+
+                            <!-- Instrumentalness -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">🎹</span>
+                                    <span class="label-text">Instrumentalness</span>
+                                    <span class="label-value" id="instrumentalnessValue">0.05</span>
+                                </div>
+                                <input type="range" class="slider" id="instrumentalness" min="0" max="1" step="0.01" value="0.05">
+                                <div class="slider-labels">
+                                    <span>Vocals</span>
+                                    <span>Instrumental</span>
+                                </div>
+                                <div class="feature-tip">No vocals? Vocal songs: 0.0-0.1</div>
+                            </div>
+
+                            <!-- Liveness -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">🎪</span>
+                                    <span class="label-text">Liveness</span>
+                                    <span class="label-value" id="livenessValue">0.15</span>
+                                </div>
+                                <input type="range" class="slider" id="liveness" min="0" max="1" step="0.01" value="0.15">
+                                <div class="slider-labels">
+                                    <span>Studio</span>
+                                    <span>Live</span>
+                                </div>
+                                <div class="feature-tip">Live audience? Studio: 0.05-0.2</div>
+                            </div>
+
+                            <!-- Tempo -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">⏱️</span>
+                                    <span class="label-text">Tempo</span>
+                                    <span class="label-value" id="tempoValue">120 BPM</span>
+                                </div>
+                                <input type="range" class="slider" id="tempo" min="30" max="250" step="1" value="120">
+                                <div class="slider-labels">
+                                    <span>Slow</span>
+                                    <span>Fast</span>
+                                </div>
+                                <div class="feature-tip">Beats per minute. Pop: 120-130, Dance: 128-140</div>
+                            </div>
+
+                            <!-- Duration -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">⏰</span>
+                                    <span class="label-text">Duration</span>
+                                    <span class="label-value" id="durationValue">3:30</span>
+                                </div>
+                                <input type="range" class="slider" id="duration_ms" min="60000" max="480000" step="1000" value="210000">
+                                <div class="slider-labels">
+                                    <span>1:00</span>
+                                    <span>8:00</span>
+                                </div>
+                                <div class="feature-tip">Song length. Radio-friendly: 2:30-4:30</div>
+                            </div>
+
+                            <!-- Key -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">🎼</span>
+                                    <span class="label-text">Key</span>
+                                    <span class="label-value" id="keyValue">C</span>
+                                </div>
+                                <select class="select-input" id="key">
+                                    <option value="0">C</option>
+                                    <option value="1">C#/Db</option>
+                                    <option value="2">D</option>
+                                    <option value="3">D#/Eb</option>
+                                    <option value="4">E</option>
+                                    <option value="5" selected>F</option>
+                                    <option value="6">F#/Gb</option>
+                                    <option value="7">G</option>
+                                    <option value="8">G#/Ab</option>
+                                    <option value="9">A</option>
+                                    <option value="10">A#/Bb</option>
+                                    <option value="11">B</option>
+                                </select>
+                                <div class="feature-tip">Musical key (0=C, 5=F, 7=G, etc.)</div>
+                            </div>
+
+                            <!-- Mode -->
+                            <div class="form-group">
+                                <div class="form-label">
+                                    <span class="label-icon">🎵</span>
+                                    <span class="label-text">Mode</span>
+                                    <span class="label-value" id="modeValue">Major</span>
+                                </div>
+                                <div class="toggle-group">
+                                    <label class="toggle-option">
+                                        <input type="radio" name="mode" value="0">
+                                        <span>Minor (Sad)</span>
+                                    </label>
+                                    <label class="toggle-option">
+                                        <input type="radio" name="mode" value="1" checked>
+                                        <span>Major (Happy)</span>
+                                    </label>
+                                </div>
+                                <div class="feature-tip">Major = happier sound, Minor = sadder sound</div>
+                            </div>
+
+                            <button type="submit" class="submit-button">
+                                <span class="button-content">
+                                    <span class="button-icon">🎯</span>
+                                    <span>Predict Hit Probability</span>
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="preview-container">
+                        <div class="preview-card">
+                            <h3 class="preview-title">🎼 Song Preview</h3>
+                            <div id="songPreview" class="song-preview">
+                                <div class="preview-metric">
+                                    <span class="metric-label">Energy × Dance</span>
+                                    <span class="metric-value" id="previewEnergyDance">0.25</span>
+                                </div>
+                                <div class="preview-metric">
+                                    <span class="metric-label">Mood Score</span>
+                                    <span class="metric-value" id="previewMood">0.50</span>
+                                </div>
+                                <div class="preview-metric">
+                                    <span class="metric-label">Complexity</span>
+                                    <span class="metric-value" id="previewComplexity">0.38</span>
+                                </div>
+                            </div>
+                            <div class="genre-badges">
+                                <span class="badge" id="genreBadge">🎵 Analyzing...</span>
+                            </div>
+                        </div>
+
+                        <div class="tips-card">
+                            <h3 class="tips-title">💡 Pro Tips</h3>
+                            <div id="dynamicTips" class="tips-list">
+                                <div class="tip-item">🎯 Hit songs typically have danceability 0.6-0.8</div>
+                                <div class="tip-item">⚡ Energy × Danceability should be around 0.55</div>
+                                <div class="tip-item">⏰ Keep duration between 2:30-4:30 for radio play</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="section" style="display: none;">
+            <div class="container">
+                <div class="results-card">
+                    <div class="results-header">
+                        <h2 class="results-title">🎉 Prediction Results</h2>
+                        <button class="close-btn" onclick="hideResults()">✕</button>
+                    </div>
+                    
+                    <div class="results-content">
+                        <div class="probability-circle">
+                            <svg class="progress-ring" width="200" height="200">
+                                <circle class="progress-ring-circle" stroke="#6366f1" stroke-width="12" fill="transparent" r="90" cx="100" cy="100"/>
+                            </svg>
+                            <div class="probability-text">
+                                <div class="probability-value" id="probabilityValue">0%</div>
+                                <div class="probability-label">Hit Probability</div>
+                            </div>
+                        </div>
+
+                        <div class="verdict-card">
+                            <div class="verdict-emoji" id="verdictEmoji">🎵</div>
+                            <h3 class="verdict-title" id="verdictTitle">Analyzing...</h3>
+                            <p class="verdict-description" id="verdictDescription">Please wait...</p>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">🎯</div>
+                                <div class="stat-label">Confidence</div>
+                                <div class="stat-value" id="confidenceScore">--</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">⭐</div>
+                                <div class="stat-label">Points Earned</div>
+                                <div class="stat-value" id="pointsEarned">+0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🏆</div>
+                                <div class="stat-label">Level</div>
+                                <div class="stat-value" id="currentLevel">1</div>
+                            </div>
+                        </div>
+
+                        <div class="improvements-section" id="improvementsSection" style="display: none;">
+                            <h3 class="improvements-title">💡 How to Improve</h3>
+                            <div id="improvementsList" class="improvements-list"></div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="action-btn primary" onclick="tryAgain()">
+                                🔄 Try Another Song
+                            </button>
+                            <button class="action-btn secondary" onclick="shareResults()">
+                                📤 Share Results
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboard-section" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">🏆 Top Hit Songs</h2>
+                    <p class="section-subtitle">Most viral predictions from our community</p>
+                </div>
+
+                <div class="leaderboard-container">
+                    <div class="leaderboard-filters">
+                        <button class="filter-btn active" data-filter="all">All Time</button>
+                        <button class="filter-btn" data-filter="week">This Week</button>
+                        <button class="filter-btn" data-filter="month">This Month</button>
+                    </div>
+
+                    <div id="leaderboardList" class="leaderboard-list">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learn Section -->
+        <section id="learn-section" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">📚 Master the Musical DNA</h2>
+                    <p class="section-subtitle">Learn what makes a song go viral</p>
+                </div>
+
+                <div class="learn-grid">
+                    <div class="learn-card">
+                        <div class="learn-icon">🎵</div>
+                        <h3 class="learn-title">Danceability</h3>
+                        <p class="learn-description">Measures how suitable a track is for dancing based on tempo, rhythm, and beat strength.</p>
+                        <div class="learn-optimal">
+                            <strong>Optimal Range:</strong> 0.65-0.85
+                        </div>
+                    </div>
+
+                    <div class="learn-card">
+                        <div class="learn-icon">⚡</div>
+                        <h3 class="learn-title">Energy</h3>
+                        <p class="learn-description">Perceptual measure of intensity and activity. High energy songs feel fast, loud, and noisy.</p>
+                        <div class="learn-optimal">
+                            <strong>Optimal Range:</strong> 0.72±0.15
+                        </div>
+                    </div>
+
+                    <div class="learn-card">
+                        <div class="learn-icon">😊</div>
+                        <h3 class="learn-title">Valence</h3>
+                        <p class="learn-description">Musical positivity conveyed by a track. High valence sounds more positive (happy, cheerful).</p>
+                        <div class="learn-optimal">
+                            <strong>Optimal Range:</strong> 0.58±0.25
+                        </div>
+                    </div>
+
+                    <div class="learn-card">
+                        <div class="learn-icon">🔊</div>
+                        <h3 class="learn-title">Loudness</h3>
+                        <p class="learn-description">Overall loudness of a track in decibels (dB). Values typically range from -60 to 0 dB.</p>
+                        <div class="learn-optimal">
+                            <strong>Optimal Range:</strong> -6.5±3 dB
+                        </div>
+                    </div>
+
+                    <div class="learn-card">
+                        <div class="learn-icon">⏱️</div>
+                        <h3 class="learn-title">Tempo</h3>
+                        <p class="learn-description">Overall estimated tempo of a track in beats per minute (BPM).</p>
+                        <div class="learn-optimal">
+                            <strong>Optimal Range:</strong> 120-130 BPM
+                        </div>
+                    </div>
+
+                    <div class="learn-card">
+                        <div class="learn-icon">⏰</div>
+                        <h3 class="learn-title">Duration</h3>
+                        <p class="learn-description">The length of the track. Radio-friendly songs are typically between 2:30-4:30.</p>
+                        <div class="learn-optimal">
+                            <strong>Optimal:</strong> 3:20 minutes
+                        </div>
+                    </div>
+                </div>
+
+                <div class="insights-section">
+                    <h3 class="insights-title">🎯 What Makes a Hit?</h3>
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <h4>🔥 Energy-Dance Synergy</h4>
+                            <p>The product of energy and danceability should be around 0.55 for maximum hit potential.</p>
+                        </div>
+                        <div class="insight-card">
+                            <h4>😊 Mood Score</h4>
+                            <p>Formula: (valence + energy + danceability) / 3. Hit range: 0.58-0.78.</p>
+                        </div>
+                        <div class="insight-card">
+                            <h4>📻 Radio Length</h4>
+                            <p>3.2 minutes is the statistical sweet spot for commercial success.</p>
+                        </div>
+                        <div class="insight-card">
+                            <h4>🎼 Major Advantage</h4>
+                            <p>Songs in major keys have 15% higher hit probability than minor keys.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Achievements Toast -->
+    <div id="achievementToast" class="achievement-toast">
+        <div class="achievement-icon">🏆</div>
+        <div class="achievement-content">
+            <div class="achievement-title">Achievement Unlocked!</div>
+            <div class="achievement-description"></div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Analyzing Musical DNA...</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
