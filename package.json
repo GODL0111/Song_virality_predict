@@ -1,14 +1,1 @@
-{
-  "name": "song-virality-frontend",
-  "version": "0.1.0",
-  "lockfileVersion": 2,
-  "requires": true,
-  "packages": {
-    "": {
-      "name": "song-virality-frontend",
-      "version": "0.1.0",
-      "private": true
-    }
-  },
-  "dependencies": {}
-}
+{\n  "name": "song-virality-predict",\n  "version": "0.1.0",\n  "private": true,\n  "scripts": {\n    "vercel-build": "cd frontend && npm ci && npm run build"\n  }\n}
