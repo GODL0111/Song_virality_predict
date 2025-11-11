@@ -9,11 +9,12 @@
     "start": "vite preview --port 3000"
   },
   "dependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "vite": "5.0.0",
-    "@vitejs/plugin-react": "4.2.0"
+    "@vitejs/plugin-react": "^4.2.0",
+    "terser": "^5.44.1",
+    "vite": "^5.0.0"
   }
 }

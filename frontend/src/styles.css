@@ -14,7 +14,8 @@ body{margin:0;background:linear-gradient(180deg,#071029 0%, #071a2a 100%);color:
 .right{width:320px}
 .card{background:rgba(255,255,255,0.03);padding:18px;border-radius:12px;margin-bottom:16px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.form-grid label{display:flex;flex-direction:column;font-size:13px;color:var(--muted)}
+.form-grid label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:6px}
+.form-grid label .value{font-weight:700;color:#ff7ab6;font-size:12px;display:inline-block}
 input[type=range]{width:100%}
 input[type=number]{padding:8px;border-radius:6px;border:none;background:#071828;color:#e6eef6}
 .actions{grid-column:1/-1;display:flex;gap:8px;margin-top:8px}
