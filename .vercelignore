@@ -1,0 +1,19 @@
+# Ignore everything except what Vercel needs
+.git
+.gitignore
+.env
+.env.local
+__pycache__
+.venv
+*.pyc
+node_modules
+src
+.github
+README.md
+SECURITY.md
+*.sol
+contracts
+datasets
+.vscode
+.idea
+*.md

@@ -1,1 +1,10 @@
-{\n  "name": "song-virality-predict",\n  "version": "0.1.0",\n  "private": true,\n  "scripts": {\n    "vercel-build": "cd frontend && npm ci && npm run build"\n  }\n}
+{
+  "name": "song-virality-predict",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Song virality prediction with Avalanche blockchain integration",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build"
+  }
+}

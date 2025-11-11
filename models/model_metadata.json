@@ -1,0 +1,22 @@
+{
+  "model_type": "XGBClassifier",
+  "accuracy": 0.9883664955070603,
+  "training_time": 0.374831,
+  "data_hash": "915175aef8f7d356a03c4bfdeb95023a",
+  "feature_names": [
+    "danceability",
+    "energy",
+    "key",
+    "loudness",
+    "mode",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "duration_ms"
+  ],
+  "created_at": "2025-09-13T18:01:23.376667",
+  "data_size": 62317
+}
