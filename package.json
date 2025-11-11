@@ -1,1 +1,8 @@
-{\n  "name": "song-virality-predict",\n  "version": "0.1.0",\n  "private": true,\n  "scripts": {\n    "vercel-build": "cd frontend && npm ci && npm run build"\n  }\n}
+{
+  "name": "song-virality-predict",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "vercel-build": "cd frontend && npm ci && npm run build"
+  }
+}
