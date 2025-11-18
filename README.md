@@ -1,6 +1,24 @@
-# 🎵 Enhanced Song Hit Predictor with Feature Engineering
-## A Study on Musical DNA
-A comprehensive machine learning system that predicts whether a song will be a hit using advanced feature engineering and multiple algorithm comparison. This system goes beyond basic prediction to provide actionable insights for music producers, artists, and record labels.
+## 🎵 Enhanced Song Hit Predictor with Feature Engineering
+A comprehensive machine learning system with React frontend and Flask API that predicts whether a song will be a hit using advanced feature engineering and XGBoost.
+
+### 🚀 Quick Start
+
+**Start both servers:**
+```bash
+# Terminal 1 - Backend API
+cd backend && python -m api.server
+
+# Terminal 2 - Frontend
+cd frontend && npm run dev
+```
+
+Then open **http://localhost:5173** in your browser
+
+See [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md) for detailed setup instructions.
+
+---
+
+## 🛠️ System Architecture
 
 ## 🚀 Key Features
 
