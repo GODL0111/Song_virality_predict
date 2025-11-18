@@ -1,15 +1,13 @@
 {
   "name": "song-virality-predict",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Song virality prediction with ML backend and React frontend",
   "private": true,
-<<<<<<< HEAD
-  "description": "Song virality prediction with Avalanche blockchain integration",
   "scripts": {
     "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build"
-=======
-  "scripts": {
-    "vercel-build": "cd frontend && npm ci && npm run build"
->>>>>>> 5ef79eb2c882dbb472783bcc8f9bf217413720f7
-  }
+    "build": "cd frontend && npm run build",
+    "api": "cd backend && python -m api.server",
+    "api:dev": "cd backend && python -m api.server --reload"
+  },
+  "keywords": ["music", "prediction", "ml", "xgboost"]
 }
