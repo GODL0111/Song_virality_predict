@@ -2,9 +2,14 @@
   "name": "song-virality-predict",
   "version": "0.1.0",
   "private": true,
+<<<<<<< HEAD
   "description": "Song virality prediction with Avalanche blockchain integration",
   "scripts": {
     "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build"
+=======
+  "scripts": {
+    "vercel-build": "cd frontend && npm ci && npm run build"
+>>>>>>> 5ef79eb2c882dbb472783bcc8f9bf217413720f7
   }
 }
