@@ -49,12 +49,30 @@ pip install pandas numpy scikit-learn xgboost matplotlib seaborn joblib scipy
 
 ### Project Structure
 ```
-enhanced_song_predictor/
-├── enhanced_song_predictor.py    # Main predictor class
-├── models/                       # Saved models directory
-├── data/                        # Data directory
-├── README.md                    # This file
-└── requirements.txt             # Dependencies
+Song_virality_predict/
+├── backend/                           # ML backend modules
+│   ├── models/                        # Trained ML models and predictors
+│   │   ├── predict_V0.1.py           # Initial XGBoost predictor
+│   │   ├── predict_main.py           # Enhanced predictor (V0.2)
+│   │   ├── song_hit_model.pkl        # Trained model weights
+│   │   └── model_metadata.json       # Model configuration
+│   ├── api/                          # API and blockchain integration
+│   ├── scripts/                      # Deployment and utility scripts
+│   ├── utils/                        # Helper functions
+│   ├── requirements.txt              # Python dependencies
+│   └── README.md                     # Backend documentation
+├── frontend/                          # React/Vite web application
+│   ├── src/                          # React components and styles
+│   ├── dist/                         # Built frontend (Vercel deployment)
+│   └── package.json                  # Frontend dependencies
+├── datasets/                         # Data files
+│   ├── spotify_songs.csv            # Training dataset
+│   └── spotify_tracks.csv           # Track data
+├── contracts/                        # Smart contracts
+│   └── MusicPredictionOracle.sol    # Avalanche blockchain contract
+├── README.md                         # This file
+├── vercel.json                       # Vercel deployment config
+└── package.json                      # Root dependencies
 ```
 
 ## 📈 Performance Comparison
