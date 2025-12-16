@@ -51,56 +51,41 @@ export default function LiveSongTest() {
     setError(null)
     
     try {
-      // Simulate file upload delay
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      setUploading(false)
-      setAnalyzing(true)
+      // Create FormData for file upload
+      const formData = new FormData()
+      formData.append('file', file)
 
-      // Generate random default features (since we don't have audio analysis library)
-      // In production, you'd use librosa/essentia to extract real audio features
-      const mockFeatures = {
-        danceability: Math.random() * 0.3 + 0.5,
-        energy: Math.random() * 0.3 + 0.5,
-        key: Math.floor(Math.random() * 12),
-        loudness: -20 + Math.random() * 15,
-        mode: Math.floor(Math.random() * 2),
-        speechiness: Math.random() * 0.2,
-        acousticness: Math.random() * 0.3 + 0.2,
-        instrumentalness: Math.random() * 0.2,
-        liveness: Math.random() * 0.3,
-        valence: Math.random() * 0.4 + 0.4,
-        tempo: 80 + Math.random() * 100,
-        duration_ms: file.duration ? file.duration * 1000 : 180000
-      }
-
-      // Send to backend for prediction
-      const response = await fetch(`${BACKEND_URL}/api/predict`, {
+      // Upload and analyze with backend
+      const response = await fetch(`${BACKEND_URL}/api/analyze-audio`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(mockFeatures)
+        body: formData
       })
 
+      setUploading(false)
+      
       if (!response.ok) {
-        throw new Error('Backend prediction failed')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Backend analysis failed')
       }
 
+      setAnalyzing(true)
       const prediction = await response.json()
       
       // Simulate analysis animation duration
       await new Promise(resolve => setTimeout(resolve, 2000))
 
       setResult({
-        fileName: fileName,
+        fileName: prediction.file_name || fileName,
         viralScore: (prediction.hit_probability * 100).toFixed(1),
         isViral: prediction.hit_probability > 0.6,
         confidence: (prediction.confidence * 100).toFixed(0),
         prediction: prediction.prediction,
-        features: mockFeatures
+        features: prediction.extracted_features
       })
 
       setAnalyzing(false)
     } catch (err) {
-      setError('Failed to analyze song. Make sure backend is running.')
+      setError(err.message || 'Failed to analyze song. Make sure backend is running.')
       console.error('Analysis error:', err)
       setAnalyzing(false)
       setUploading(false)

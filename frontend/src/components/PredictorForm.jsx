@@ -66,7 +66,24 @@ export default function PredictorForm({onResult}){
       }
       
       const result = await resp.json()
-      const payload = {...result, features: form, songName: songName.trim()}
+      
+      // Get improvement suggestions
+      let suggestions = []
+      try {
+        const sugResp = await fetch(`${BACKEND_URL}/api/suggest-improvements`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(form)
+        })
+        if (sugResp.ok) {
+          const sugData = await sugResp.json()
+          suggestions = sugData.suggestions || []
+        }
+      } catch (err) {
+        console.error('Error fetching suggestions:', err)
+      }
+      
+      const payload = {...result, features: form, songName: songName.trim(), suggestions}
       setLast(payload)
       onResult && onResult(payload)
 
@@ -158,6 +175,36 @@ export default function PredictorForm({onResult}){
           <h3>Prediction for "{last.songName}"</h3>
           <p>Hit Probability: <strong>{(last.hit_probability*100).toFixed(1)}%</strong></p>
           <p>Confidence: {(last.confidence*100).toFixed(0)}%</p>
+          <p>Status: <strong>{last.hit_probability > 0.5 ? '🎵 HIT' : '📊 MISS'}</strong></p>
+          
+          {last.suggestions && last.suggestions.length > 0 && (
+            <div style={{marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.2)'}}>
+              <h4>💡 Suggestions to Improve</h4>
+              <div style={{display: 'grid', gap: '12px'}}>
+                {last.suggestions.slice(0, 3).map((sug, idx) => (
+                  <div key={idx} style={{
+                    background: 'rgba(255,255,255,0.05)',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    borderLeft: '3px solid #4CAF50'
+                  }}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+                      <strong>{sug.feature}</strong>
+                      <span style={{fontSize: '12px', color: '#4CAF50', fontWeight: 'bold'}}>
+                        {sug.direction === 'INCREASE' ? '⬆' : sug.direction === 'DECREASE' ? '⬇' : '→'} {(sug.improvement_percent || 0).toFixed(1)}%
+                      </span>
+                    </div>
+                    <div style={{fontSize: '13px', color: '#aaa', marginBottom: '4px'}}>
+                      Change from {sug.current.toFixed(2)} → {sug.suggested.toFixed(2)}
+                    </div>
+                    <div style={{fontSize: '12px', color: '#888'}}>
+                      New probability: {(sug.new_probability * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}      
     </div>
