@@ -194,10 +194,6 @@ export default function Layout({ score, logs, onResult }) {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="app-footer">
-        <p>Developed by <span className="developer">GodL</span></p>
-      </footer>
     </div>
   )
 }

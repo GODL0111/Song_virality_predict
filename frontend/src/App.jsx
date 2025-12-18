@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 export default function App(){
   const [mounted, setMounted] = useState(false)
   const [Layout, setLayout] = useState(null)
+  const [error, setError] = useState(null)
   const [score, setScore] = useState(() => {
     try {
       return Number(localStorage.getItem('sv_score') || 0)
@@ -25,6 +26,7 @@ export default function App(){
       setMounted(true)
     }).catch(err => {
       console.error('Failed to load Layout:', err)
+      setError(err.message)
       setMounted(true)
     })
   }, [])
@@ -54,8 +56,30 @@ export default function App(){
     setLogs(l => [entry, ...l].slice(0,50))
   }
 
-  if (!mounted || !Layout) {
-    return <div style={{color: '#fff', padding: '20px'}}>Loading app...</div>
+  if (!mounted) {
+    return <div style={{color: '#fff', padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f1724'}}>
+      <div>
+        <div style={{fontSize: '24px', marginBottom: '20px'}}>🎵 Loading SoundViral...</div>
+        <div style={{width: '50px', height: '50px', border: '4px solid rgba(255,122,182,0.2)', borderTopColor: '#ff7ab6', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto'}}></div>
+      </div>
+    </div>
+  }
+
+  if (error) {
+    return <div style={{color: '#ff6b6b', padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f1724'}}>
+      <div>
+        <div style={{fontSize: '24px', marginBottom: '20px'}}>⚠️ Error Loading App</div>
+        <div style={{fontFamily: 'monospace', background: 'rgba(255,0,0,0.1)', padding: '20px', borderRadius: '8px'}}>{error}</div>
+      </div>
+    </div>
+  }
+
+  if (!Layout) {
+    return <div style={{color: '#fff', padding: '40px', textAlign: 'center', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f1724'}}>
+      <div>
+        <div style={{fontSize: '24px', marginBottom: '20px'}}>🎵 Loading Layout...</div>
+      </div>
+    </div>
   }
 
   return (
