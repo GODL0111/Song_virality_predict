@@ -1,0 +1,68 @@
+======================================================================
+MODEL TRAINING REPORT
+======================================================================
+
+DATASET INFORMATION
+----------------------------------------------------------------------
+Train samples: 43621
+Test samples:  9348
+Valid samples: 9348
+Total samples: 62317
+
+
+======================================================================
+XGBOOST MODEL
+======================================================================
+Training timestamp: 2025-12-18T10:52:01.250050
+
+TRAIN SET METRICS:
+----------------------------------------------------------------------
+  accuracy...................... 0.7542
+  precision..................... 0.2163
+  recall........................ 0.9085
+  f1_score...................... 0.3494
+  auc_roc....................... 0.9035
+  specificity................... 0.7421
+  false_positive_rate........... 0.2579
+  false_negative_rate........... 0.0915
+
+  Confusion Matrix:
+    True Negatives:  30021
+    False Positives: 10431
+    False Negatives: 290
+    True Positives:  2879
+
+TEST SET METRICS:
+----------------------------------------------------------------------
+  accuracy...................... 0.7260
+  precision..................... 0.1603
+  recall........................ 0.6539
+  f1_score...................... 0.2575
+  auc_roc....................... 0.7585
+  specificity................... 0.7317
+  false_positive_rate........... 0.2683
+  false_negative_rate........... 0.3461
+
+  Confusion Matrix:
+    True Negatives:  6343
+    False Positives: 2326
+    False Negatives: 235
+    True Positives:  444
+
+VAL SET METRICS:
+----------------------------------------------------------------------
+  accuracy...................... 0.7230
+  precision..................... 0.1604
+  recall........................ 0.6642
+  f1_score...................... 0.2584
+  auc_roc....................... 0.7696
+  specificity................... 0.7277
+  false_positive_rate........... 0.2723
+  false_negative_rate........... 0.3358
+
+  Confusion Matrix:
+    True Negatives:  6308
+    False Positives: 2361
+    False Negatives: 228
+    True Positives:  451
+

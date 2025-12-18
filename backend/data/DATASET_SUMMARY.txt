@@ -1,0 +1,42 @@
+======================================================================
+DATASET PREPARATION SUMMARY
+======================================================================
+
+PRIMARY DATASET
+----------------------------------------------------------------------
+Source: datasets/spotify_tracks.csv
+Initial Records: 62317
+After Cleaning: 62317
+
+CLASS DISTRIBUTION
+----------------------------------------------------------------------
+Non-hits (popularity < 50): 57790
+Hits (popularity >= 50): 4527
+
+TRAIN/TEST/VALIDATION SPLITS
+----------------------------------------------------------------------
+Train: 43621 samples (70%)
+Test:  9348 samples (15%)
+Valid: 9348 samples (15%)
+
+SAVED FILES
+----------------------------------------------------------------------
+backend\data/train_dataset.csv
+backend\data/test_dataset.csv
+backend\data/validation_dataset.csv
+backend\data/dataset_stats.json
+
+MUSICAL FEATURES
+----------------------------------------------------------------------
+ 1. danceability
+ 2. energy
+ 3. key
+ 4. loudness
+ 5. mode
+ 6. speechiness
+ 7. acousticness
+ 8. instrumentalness
+ 9. liveness
+10. valence
+11. tempo
+12. duration_ms

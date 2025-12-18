@@ -1,0 +1,9 @@
+{
+  "initial_records": 62317,
+  "after_cleaning": 62317,
+  "non_hits": 57790,
+  "hits": 4527,
+  "train_samples": 43621,
+  "test_samples": 9348,
+  "val_samples": 9348
+}
