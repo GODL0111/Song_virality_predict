@@ -1,0 +1,42 @@
+# Blockchain Integration Requirements for Song Virality Predictor
+# Install with: pip install -r requirements_blockchain.txt
+
+# Core blockchain libraries
+web3>=6.0.0
+eth-account>=0.8.0
+eth-utils>=2.0.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# HTTP requests for RPC calls
+requests>=2.28.0
+
+# Additional utilities
+hexbytes>=0.3.0
+toolz>=0.12.0
+
+# Optional: For enhanced Web3 functionality
+eth-abi>=4.0.0
+eth-typing>=3.0.0
+
+# For JSON handling and hashing (usually included in Python but listed for completeness)
+# These are typically built-in but may need explicit installation in some environments
+# json - built-in
+# hashlib - built-in
+
+# Development and testing dependencies (optional)
+# Uncomment if you need these for development
+# pytest>=7.0.0
+# pytest-asyncio>=0.20.0
+# brownie-eth>=1.19.0
+
+# Note: Make sure you also have the existing requirements for the base predictor:
+# pandas
+# numpy
+# scikit-learn
+# xgboost
+# matplotlib
+# seaborn
+# joblib
+# scipy
