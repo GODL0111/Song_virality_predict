@@ -3,6 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "vercel-build": "cd frontend && npm ci && npm run build"
+    "vercel-build": "cd frontend && rm -f package-lock.json && npm install --no-audit --no-fund && npm run build"
   }
 }
