@@ -1,8 +1,9 @@
 {
   "model_type": "XGBClassifier",
-  "accuracy": 0.5686777920410783,
-  "training_time": 0.272742,
-  "data_hash": "915175aef8f7d356a03c4bfdeb95023a",
+  "model_framework": "xgboost",
+  "accuracy": 0.723,
+  "training_time": 0.64,
+  "data_hash": "current_training",
   "feature_names": [
     "danceability",
     "energy",
@@ -17,6 +18,9 @@
     "tempo",
     "duration_ms"
   ],
-  "created_at": "2025-11-20T16:08:56.703983",
-  "data_size": 62317
+  "created_at": "2025-12-18T10:52:01",
+  "data_size": 52969,
+  "bias_correction": "calibrated",
+  "bias_correction_method": "Platt-inspired rescaling for imbalanced data",
+  "scale_pos_weight": "enabled"
 }

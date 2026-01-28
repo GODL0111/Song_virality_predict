@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL ? window.BACKEND_URL : 'http://localhost:5001'
+const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL ? window.BACKEND_URL : 'http://localhost:5000'
 
 const DEFAULTS = {
   danceability: 0.65,

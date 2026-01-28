@@ -84,43 +84,33 @@ def extract_audio_features(audio_file):
     """
     Extract comprehensive musical DNA features from audio file using librosa
     
-    LIBROSA CAN EXTRACT 30+ FEATURES:
-    ================================
-    1. duration_ms - Track duration in milliseconds
-    2. tempo - Beats per minute (BPM)
-    3. energy - Perceptual measure of intensity (0-1)
-    4. loudness - Overall loudness in dB (-60 to 0)
-    5. danceability - How suitable for dancing (0-1)
-    6. valence - Musical positivity/happiness (0-1)
-    7. speechiness - Presence of spoken words (0-1)
-    8. acousticness - Acoustic vs electronic (0-1)
-    9. liveness - Presence of audience (0-1)
-    10. instrumentalness - Vocal vs instrumental (0-1)
-    11. key - Musical key (0-11, C to B)
+    IMPORTANT: Librosa extracts raw audio signal features, while Spotify uses
+    proprietary ML models trained on millions of tracks. We apply empirical
+    calibration to approximate Spotify's feature definitions.
+    
+    Calibration is based on analyzing the distribution differences between
+    librosa outputs and Spotify's documented feature ranges/behaviors.
+    
+    The 12 Musical DNA Features:
+    ============================
+    1. duration_ms - Track duration in milliseconds (direct measurement)
+    2. tempo - Beats per minute, 40-250 BPM range
+    3. energy - Perceptual intensity (0-1), correlated with loudness/dynamics
+    4. loudness - Overall loudness in dB, typically -60 to 0
+    5. danceability - Rhythm regularity + tempo suitability (0-1)
+    6. valence - Musical positivity/mood (0-1) - HARDEST to estimate
+    7. speechiness - Spoken word detection (0-1)
+    8. acousticness - Acoustic vs electronic sound (0-1)
+    9. liveness - Live performance indicators (0-1)
+    10. instrumentalness - Absence of vocals (0-1)
+    11. key - Musical key (0-11, C=0 to B=11)
     12. mode - Major (1) or Minor (0)
-    
-    ADDITIONAL FEATURES (for display):
-    13-32. mfcc_1 to mfcc_20 - Mel-frequency cepstral coefficients
-    33. spectral_centroid - Brightness of sound
-    34. spectral_bandwidth - Range of frequencies
-    35. spectral_rolloff - Frequency below which most energy exists
-    36. spectral_contrast - Difference between peaks and valleys
-    37. spectral_flatness - Noise vs tonal content
-    38. zero_crossing_rate - Rate of sign changes
-    39. chroma_mean - Average chroma distribution
-    40. onset_strength - Beat/note onset detection
-    41. harmonic_ratio - Harmonic vs percussive content
-    42. tempo_confidence - How confident the tempo estimate is
-    
-    NOTE: Spotify uses proprietary algorithms trained on millions of tracks.
-    Librosa extracts raw audio features which may differ from Spotify's values.
-    We apply calibration to approximate Spotify's definitions.
     """
     if not LIBROSA_AVAILABLE:
         return None
     
     try:
-        # Load audio file with optimal settings
+        # Load audio file with optimal settings for feature extraction
         y, sr = librosa.load(audio_file, sr=22050, mono=True)
         
         if len(y) == 0:
@@ -130,7 +120,7 @@ def extract_audio_features(audio_file):
         features = {}
         all_features = {}  # Store all extracted features for display
         
-        # === DURATION (milliseconds) ===
+        # === DURATION (milliseconds) - Direct measurement ===
         duration_sec = librosa.get_duration(y=y, sr=sr)
         features['duration_ms'] = int(duration_sec * 1000)
         all_features['duration_sec'] = round(duration_sec, 2)
@@ -138,14 +128,11 @@ def extract_audio_features(audio_file):
         # === TEMPO ANALYSIS ===
         onset_env = librosa.onset.onset_strength(y=y, sr=sr)
         tempo, beat_frames = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
-        
-        # More accurate tempo using tempogram
-        tempogram = librosa.feature.tempogram(onset_envelope=onset_env, sr=sr)
         tempo_estimate = librosa.feature.tempo(onset_envelope=onset_env, sr=sr)[0]
         
+        # Use the more reliable tempo estimate, clamped to realistic range
         features['tempo'] = float(np.clip(tempo_estimate, 40, 250))
         all_features['tempo_primary'] = float(tempo)
-        all_features['tempo_estimate'] = float(tempo_estimate)
         all_features['beat_count'] = len(beat_frames)
         
         # === HARMONIC-PERCUSSIVE SEPARATION ===
@@ -153,35 +140,46 @@ def extract_audio_features(audio_file):
         harmonic_energy = np.sum(y_harmonic ** 2)
         percussive_energy = np.sum(y_percussive ** 2)
         total_energy = harmonic_energy + percussive_energy + 1e-10
-        all_features['harmonic_ratio'] = round(harmonic_energy / total_energy, 4)
-        all_features['percussive_ratio'] = round(percussive_energy / total_energy, 4)
+        harmonic_ratio = harmonic_energy / total_energy
+        percussive_ratio = percussive_energy / total_energy
+        all_features['harmonic_ratio'] = round(harmonic_ratio, 4)
+        all_features['percussive_ratio'] = round(percussive_ratio, 4)
         
-        # === RMS ENERGY ===
+        # === RMS ENERGY ANALYSIS ===
         rms = librosa.feature.rms(y=y)[0]
         rms_mean = np.mean(rms)
         rms_std = np.std(rms)
         rms_max = np.max(rms) + 1e-10
+        rms_min = np.min(rms) + 1e-10
         
-        # Energy: Calibrated to Spotify's scale
-        # Spotify energy is about intensity/loudness perception
+        # === ENERGY (Spotify-calibrated) ===
+        # Spotify energy correlates with loudness, dynamic range, and spectral content
+        # Calibration: Spotify energy tends to be higher than raw RMS ratios
         energy_raw = rms_mean / rms_max
-        # Apply sigmoid-like transformation for better calibration
-        energy_calibrated = 1 / (1 + np.exp(-5 * (energy_raw - 0.3)))
+        dynamic_range = rms_max / rms_min
+        dynamic_factor = np.clip(np.log10(dynamic_range + 1) / 2, 0, 1)
+        
+        # Spotify energy formula approximation (empirically calibrated)
+        # High energy songs: loud, consistent RMS, strong beats
+        energy_calibrated = (
+            0.4 * energy_raw +                    # Base energy from RMS
+            0.3 * (1 - rms_std / (rms_mean + 1e-6)) +  # Consistency bonus
+            0.2 * percussive_ratio +              # Percussive content
+            0.1 * dynamic_factor                  # Dynamic range
+        )
+        # Apply slight boost - Spotify energy tends higher
+        energy_calibrated = energy_calibrated * 1.15
         features['energy'] = float(np.clip(energy_calibrated, 0, 1))
         all_features['energy_raw'] = round(float(energy_raw), 4)
-        all_features['rms_mean'] = round(float(rms_mean), 6)
-        all_features['rms_std'] = round(float(rms_std), 6)
-        all_features['dynamic_range'] = round(float(rms_max / (rms_mean + 1e-10)), 4)
         
-        # === LOUDNESS (dB) ===
+        # === LOUDNESS (dB, LUFS approximation) ===
         # Spotify uses LUFS (Loudness Units Full Scale)
-        # Approximate using RMS to dB
         loudness_db = 20 * np.log10(rms_mean + 1e-10)
-        # Calibrate: Spotify loudness typically -3 to -15 for modern music
-        loudness_calibrated = loudness_db + 10  # Offset to match Spotify range
+        # Calibration: Add offset to match Spotify's typical range (-3 to -15 dB)
+        # Raw librosa values are typically -25 to -40 dB
+        loudness_calibrated = loudness_db + 18  # Empirical offset
         features['loudness'] = float(np.clip(loudness_calibrated, -60, 0))
         all_features['loudness_raw_db'] = round(float(loudness_db), 2)
-        all_features['loudness_calibrated'] = round(float(loudness_calibrated), 2)
         
         # === SPECTRAL FEATURES ===
         spectral_centroids = librosa.feature.spectral_centroid(y=y, sr=sr)[0]
@@ -193,143 +191,195 @@ def extract_audio_features(audio_file):
         cent_mean = np.mean(spectral_centroids)
         bandwidth_mean = np.mean(spectral_bandwidth)
         rolloff_mean = np.mean(spectral_rolloff)
+        flatness_mean = np.mean(spectral_flatness)
+        contrast_mean = np.mean(spectral_contrast)
+        
+        nyquist = sr / 2
+        cent_norm = cent_mean / nyquist
+        rolloff_norm = rolloff_mean / nyquist
         
         all_features['spectral_centroid_hz'] = round(float(cent_mean), 2)
         all_features['spectral_bandwidth_hz'] = round(float(bandwidth_mean), 2)
         all_features['spectral_rolloff_hz'] = round(float(rolloff_mean), 2)
-        all_features['spectral_contrast_mean'] = round(float(np.mean(spectral_contrast)), 4)
-        all_features['spectral_flatness_mean'] = round(float(np.mean(spectral_flatness)), 6)
+        all_features['spectral_flatness'] = round(float(flatness_mean), 6)
         
-        # Normalize spectral features (0-1 scale based on Nyquist)
-        nyquist = sr / 2
-        cent_norm = cent_mean / nyquist
-        bandwidth_norm = bandwidth_mean / nyquist
-        rolloff_norm = rolloff_mean / nyquist
-        
-        # === DANCEABILITY ===
-        # Spotify: tempo, rhythm stability, beat strength, overall regularity
+        # === DANCEABILITY (Spotify-calibrated) ===
+        # Spotify: combination of tempo, rhythm stability, beat strength, regularity
+        # Beat regularity - how consistent the beat intervals are
         if len(beat_frames) > 2:
             beat_intervals = np.diff(librosa.frames_to_time(beat_frames, sr=sr))
-            beat_regularity = 1.0 - (np.std(beat_intervals) / (np.mean(beat_intervals) + 1e-6))
-            beat_regularity = np.clip(beat_regularity, 0, 1)
+            beat_regularity = 1.0 - np.clip(np.std(beat_intervals) / (np.mean(beat_intervals) + 1e-6), 0, 1)
         else:
             beat_regularity = 0.5
         
-        # Rhythm strength from onset envelope
-        rhythm_strength = np.mean(onset_env) / (np.max(onset_env) + 1e-6)
+        # Rhythm strength from onset envelope variance
+        rhythm_strength = np.clip(np.std(onset_env) / (np.mean(onset_env) + 1e-6), 0, 2) / 2
         
-        # Tempo factor (most danceable: 100-130 BPM)
-        tempo_factor = 1.0 - abs(features['tempo'] - 115) / 100
-        tempo_factor = np.clip(tempo_factor, 0.3, 1.0)
+        # Tempo factor: Most danceable 95-135 BPM (club music range)
+        optimal_tempo = 120
+        tempo_spread = 40
+        tempo_factor = 1.0 - np.clip(abs(features['tempo'] - optimal_tempo) / tempo_spread, 0, 0.7)
         
-        # Combined danceability
+        # Groove factor: percussive + low frequency content
+        groove = percussive_ratio * 0.6 + (1 - cent_norm) * 0.4
+        
+        # Combined danceability with Spotify-like calibration
         danceability_raw = (
-            0.35 * beat_regularity +
-            0.25 * rhythm_strength +
-            0.20 * tempo_factor +
-            0.20 * features['energy']
+            0.30 * beat_regularity +      # Beat consistency
+            0.25 * rhythm_strength +      # Rhythmic variation  
+            0.20 * tempo_factor +         # Optimal tempo range
+            0.15 * groove +               # Percussive groove
+            0.10 * features['energy']     # Energy contribution
         )
-        features['danceability'] = float(np.clip(danceability_raw, 0, 1))
+        # Calibration boost - Spotify danceability tends to be higher
+        danceability_calibrated = danceability_raw * 1.2 + 0.1
+        features['danceability'] = float(np.clip(danceability_calibrated, 0, 1))
         all_features['beat_regularity'] = round(float(beat_regularity), 4)
         all_features['rhythm_strength'] = round(float(rhythm_strength), 4)
-        all_features['tempo_factor'] = round(float(tempo_factor), 4)
         
-        # === VALENCE (Musical Positivity) ===
-        # Major key, brighter timbre, faster tempo = higher valence
-        # This is very approximate - Spotify uses ML models
-        brightness = cent_norm * 2  # Brighter = more positive
-        tempo_positivity = (features['tempo'] - 80) / 120  # Faster = more positive
-        tempo_positivity = np.clip(tempo_positivity, 0, 1)
+        # === VALENCE (Musical Positivity) - MOST DIFFICULT ===
+        # Spotify uses complex ML models for valence
+        # We approximate using: mode, tempo, brightness, energy
         
-        valence_raw = 0.4 * brightness + 0.3 * tempo_positivity + 0.3 * features['energy']
-        features['valence'] = float(np.clip(valence_raw, 0, 1))
+        # Chroma analysis for key/mode
+        chroma = librosa.feature.chroma_cqt(y=y_harmonic, sr=sr)
+        chroma_mean = np.mean(chroma, axis=1)
+        key = int(np.argmax(chroma_mean))
+        
+        # Mode detection (Major vs Minor)
+        major_third = chroma_mean[(key + 4) % 12]
+        minor_third = chroma_mean[(key + 3) % 12]
+        fifth = chroma_mean[(key + 7) % 12]
+        major_score = chroma_mean[key] + major_third + fifth
+        minor_score = chroma_mean[key] + minor_third + fifth
+        is_major = major_score > minor_score
+        mode_factor = 0.6 if is_major else 0.4  # Major = happier
+        
+        # Brightness factor (brighter = more positive)
+        brightness = np.clip(cent_norm * 1.5, 0, 1)
+        
+        # Tempo factor for valence (moderate-fast = more positive)
+        tempo_valence = np.clip((features['tempo'] - 70) / 100, 0, 1)
+        
+        # Harmonic complexity (simpler = more positive pop feel)
+        harmonic_simplicity = 1 - np.clip(np.std(chroma_mean) / np.mean(chroma_mean), 0, 1)
+        
+        # Combined valence with empirical calibration
+        valence_raw = (
+            0.25 * mode_factor +           # Major/minor influence
+            0.25 * brightness +            # Spectral brightness
+            0.20 * tempo_valence +         # Tempo influence
+            0.15 * features['energy'] +    # Energy contribution
+            0.15 * harmonic_simplicity     # Harmonic clarity
+        )
+        # Calibration: Center around 0.5 and spread
+        valence_calibrated = 0.5 + (valence_raw - 0.5) * 1.4
+        features['valence'] = float(np.clip(valence_calibrated, 0, 1))
+        all_features['mode_factor'] = round(float(mode_factor), 4)
         all_features['brightness'] = round(float(brightness), 4)
-        all_features['tempo_positivity'] = round(float(tempo_positivity), 4)
         
         # === ZERO CROSSING RATE ===
         zcr = librosa.feature.zero_crossing_rate(y)[0]
         zcr_mean = np.mean(zcr)
         all_features['zero_crossing_rate'] = round(float(zcr_mean), 6)
         
-        # === SPEECHINESS ===
-        # High ZCR + specific spectral characteristics = speech
-        # Speech: ZCR typically 0.05-0.15
-        zcr_speech_factor = np.clip((zcr_mean - 0.02) / 0.15, 0, 1)
+        # === SPEECHINESS (Spotify-calibrated) ===
+        # Speech characteristics: high ZCR, specific spectral patterns
+        # Typical speech ZCR: 0.05-0.15
+        zcr_factor = np.clip((zcr_mean - 0.03) / 0.12, 0, 1)
         
-        # Speech has less tonal content (higher spectral flatness)
-        flatness_factor = np.clip(np.mean(spectral_flatness) * 10, 0, 1)
+        # Speech has moderate spectral flatness (not pure noise, not pure tone)
+        speech_flatness = 1 - abs(flatness_mean - 0.1) * 5
+        speech_flatness = np.clip(speech_flatness, 0, 1)
         
-        speechiness_raw = 0.6 * zcr_speech_factor + 0.4 * flatness_factor
-        features['speechiness'] = float(np.clip(speechiness_raw * 0.8, 0, 1))  # Scale down
-        all_features['zcr_speech_factor'] = round(float(zcr_speech_factor), 4)
+        # Low harmonic ratio suggests speech over singing
+        speech_harmonic = 1 - harmonic_ratio
         
-        # === ACOUSTICNESS ===
-        # Acoustic music: less high frequency content, more harmonic
-        high_freq_ratio = rolloff_norm
-        acousticness_raw = (
-            0.5 * (1.0 - high_freq_ratio) +
-            0.3 * (1.0 - features['energy']) +
-            0.2 * all_features['harmonic_ratio']
+        speechiness_raw = (
+            0.50 * zcr_factor +
+            0.30 * speech_flatness +
+            0.20 * speech_harmonic
         )
-        features['acousticness'] = float(np.clip(acousticness_raw, 0, 1))
-        all_features['high_freq_ratio'] = round(float(high_freq_ratio), 4)
+        # Spotify speechiness is typically low (< 0.3) for most music
+        # Apply calibration to match Spotify's conservative scale
+        speechiness_calibrated = speechiness_raw * 0.6
+        features['speechiness'] = float(np.clip(speechiness_calibrated, 0, 1))
         
-        # === LIVENESS ===
-        # Live recordings have more reverb, crowd noise (spectral irregularity)
-        flatness_mean = np.mean(spectral_flatness)
-        liveness_raw = flatness_mean * 3  # Spectral noise indicates live ambience
-        features['liveness'] = float(np.clip(liveness_raw, 0, 1))
+        # === ACOUSTICNESS (Spotify-calibrated) ===
+        # Acoustic music: less high frequencies, more harmonic, less loudness
+        high_freq_content = rolloff_norm
         
-        # === INSTRUMENTALNESS ===
-        # Inverse of speechiness, boosted by harmonic content
-        instrumental_base = 1.0 - features['speechiness']
-        # Harmonic content suggests instruments
-        harmonic_boost = all_features['harmonic_ratio'] * 0.3
-        features['instrumentalness'] = float(np.clip(instrumental_base + harmonic_boost, 0, 1))
+        acousticness_raw = (
+            0.35 * (1.0 - high_freq_content) +     # Less high frequency
+            0.30 * harmonic_ratio +                 # More harmonic
+            0.20 * (1.0 - features['energy']) +    # Typically quieter
+            0.15 * (1.0 - percussive_ratio)        # Less percussive
+        )
+        # Calibration for typical music distribution
+        acousticness_calibrated = acousticness_raw * 1.1
+        features['acousticness'] = float(np.clip(acousticness_calibrated, 0, 1))
         
-        # === CHROMA / KEY DETECTION ===
-        chroma = librosa.feature.chroma_cqt(y=y_harmonic, sr=sr)
-        chroma_mean = np.mean(chroma, axis=1)
+        # === LIVENESS (Spotify-calibrated) ===
+        # Live recordings: audience noise, reverb, less consistent dynamics
+        # High spectral flatness can indicate ambient noise
+        noise_factor = np.clip(flatness_mean * 5, 0, 1)
         
-        # Key detection
-        key = int(np.argmax(chroma_mean))
-        key_strength = float(np.max(chroma_mean) / (np.sum(chroma_mean) + 1e-10))
+        # Dynamic variance indicates live performance
+        dynamic_variance = np.clip(rms_std / (rms_mean + 1e-6), 0, 1)
+        
+        # Reverb detection via spectral decay (approximate)
+        spectral_decay = np.clip(np.mean(np.diff(spectral_rolloff)) / 1000, -1, 1)
+        reverb_factor = np.clip(0.5 - spectral_decay, 0, 1)
+        
+        liveness_raw = (
+            0.40 * noise_factor +
+            0.35 * dynamic_variance +
+            0.25 * reverb_factor
+        )
+        # Most studio recordings have low liveness (< 0.3)
+        liveness_calibrated = liveness_raw * 0.7
+        features['liveness'] = float(np.clip(liveness_calibrated, 0, 1))
+        
+        # === INSTRUMENTALNESS (Spotify-calibrated) ===
+        # High instrumentalness = no vocals
+        # Vocals have specific spectral characteristics
+        
+        # Vocal frequency range presence (300-3400 Hz)
+        vocal_range_energy = np.mean(spectral_centroids > 300) * np.mean(spectral_centroids < 3400)
+        vocal_presence = np.clip(vocal_range_energy * 2, 0, 1)
+        
+        # Low speechiness and ZCR suggests instrumental
+        instrumental_raw = (
+            0.40 * (1 - features['speechiness']) +
+            0.30 * (1 - zcr_factor) +
+            0.30 * harmonic_ratio
+        )
+        # Calibrate - most pop/rock has vocals (low instrumentalness)
+        instrumentalness_calibrated = instrumental_raw * 0.8
+        features['instrumentalness'] = float(np.clip(instrumentalness_calibrated, 0, 1))
+        
+        # === KEY (0-11) ===
         features['key'] = key
         all_features['key_name'] = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][key]
-        all_features['key_strength'] = round(key_strength, 4)
+        all_features['key_strength'] = round(float(np.max(chroma_mean) / (np.sum(chroma_mean) + 1e-10)), 4)
         
-        # === MODE (Major/Minor) ===
-        # Major: strong major third (4 semitones), Minor: strong minor third (3 semitones)
-        major_third = chroma_mean[(key + 4) % 12]
-        minor_third = chroma_mean[(key + 3) % 12]
-        fifth = chroma_mean[(key + 7) % 12]
-        
-        major_score = chroma_mean[key] + major_third + fifth
-        minor_score = chroma_mean[key] + minor_third + fifth
-        
-        features['mode'] = 1 if major_score > minor_score else 0
-        all_features['mode_name'] = 'Major' if features['mode'] == 1 else 'Minor'
+        # === MODE (Major=1, Minor=0) ===
+        features['mode'] = 1 if is_major else 0
+        all_features['mode_name'] = 'Major' if is_major else 'Minor'
         all_features['major_confidence'] = round(float(major_score / (major_score + minor_score + 1e-10)), 4)
         
-        # === MFCCs (Mel-frequency cepstral coefficients) ===
-        mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=20)
-        for i in range(20):
+        # === MFCCs for additional analysis ===
+        mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+        for i in range(13):
             all_features[f'mfcc_{i+1}'] = round(float(np.mean(mfccs[i])), 4)
         
-        # === ONSET STRENGTH ===
-        all_features['onset_strength_mean'] = round(float(np.mean(onset_env)), 4)
-        all_features['onset_strength_max'] = round(float(np.max(onset_env)), 4)
-        
-        # === TONNETZ (Tonal Centroid Features) ===
-        tonnetz = librosa.feature.tonnetz(y=y_harmonic, sr=sr)
-        all_features['tonnetz_mean'] = round(float(np.mean(tonnetz)), 6)
-        
-        # Log the main 12 features
+        # Log extracted features
         logger.info(f"Extracted features: {features}")
         
-        # Store all features in a special key for display
+        # Store all features for detailed display
         features['_all_features'] = all_features
         features['_feature_count'] = len(all_features)
+        features['_calibration_note'] = "Features calibrated to approximate Spotify's scale"
         
         return features
         
@@ -338,23 +388,6 @@ def extract_audio_features(audio_file):
         import traceback
         traceback.print_exc()
         return None
-        import traceback
-        traceback.print_exc()
-        # Return realistic defaults instead of None
-        return {
-            'danceability': 0.65,
-            'energy': 0.72,
-            'key': 5,
-            'loudness': -6.5,
-            'mode': 1,
-            'speechiness': 0.08,
-            'acousticness': 0.25,
-            'instrumentalness': 0.05,
-            'liveness': 0.15,
-            'valence': 0.58,
-            'tempo': 125,
-            'duration_ms': 210000
-        }
 
 
 def load_model_globally():

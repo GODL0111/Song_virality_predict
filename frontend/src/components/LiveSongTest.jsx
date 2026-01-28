@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import './LiveSongTest.css'
 
-const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL ? window.BACKEND_URL : 'http://localhost:5001'
+const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL ? window.BACKEND_URL : 'http://localhost:5000'
 
 export default function LiveSongTest() {
   const [file, setFile] = useState(null)
@@ -268,60 +268,167 @@ export default function LiveSongTest() {
               </div>
 
               <div className="result-features">
-                <h4>Audio Features</h4>
+                <h4>🎵 Core Audio Features (12)</h4>
                 <div className="features-grid">
                   <div className="feature">
                     <span className="feature-label">Danceability</span>
                     <div className="feature-bar">
-                      <div 
-                        className="feature-fill"
-                        style={{ width: `${result.features.danceability * 100}%` }}
-                      ></div>
+                      <div className="feature-fill" style={{ width: `${result.features.danceability * 100}%` }}></div>
                     </div>
                     <span className="feature-value">{(result.features.danceability * 100).toFixed(0)}%</span>
                   </div>
                   <div className="feature">
                     <span className="feature-label">Energy</span>
                     <div className="feature-bar">
-                      <div 
-                        className="feature-fill"
-                        style={{ width: `${result.features.energy * 100}%` }}
-                      ></div>
+                      <div className="feature-fill" style={{ width: `${result.features.energy * 100}%` }}></div>
                     </div>
                     <span className="feature-value">{(result.features.energy * 100).toFixed(0)}%</span>
                   </div>
                   <div className="feature">
-                    <span className="feature-label">Valence</span>
+                    <span className="feature-label">Valence (Positivity)</span>
                     <div className="feature-bar">
-                      <div 
-                        className="feature-fill"
-                        style={{ width: `${result.features.valence * 100}%` }}
-                      ></div>
+                      <div className="feature-fill" style={{ width: `${result.features.valence * 100}%` }}></div>
                     </div>
                     <span className="feature-value">{(result.features.valence * 100).toFixed(0)}%</span>
                   </div>
                   <div className="feature">
                     <span className="feature-label">Acousticness</span>
                     <div className="feature-bar">
-                      <div 
-                        className="feature-fill"
-                        style={{ width: `${result.features.acousticness * 100}%` }}
-                      ></div>
+                      <div className="feature-fill" style={{ width: `${result.features.acousticness * 100}%` }}></div>
                     </div>
                     <span className="feature-value">{(result.features.acousticness * 100).toFixed(0)}%</span>
+                  </div>
+                  <div className="feature">
+                    <span className="feature-label">Speechiness</span>
+                    <div className="feature-bar">
+                      <div className="feature-fill" style={{ width: `${result.features.speechiness * 100}%` }}></div>
+                    </div>
+                    <span className="feature-value">{(result.features.speechiness * 100).toFixed(0)}%</span>
+                  </div>
+                  <div className="feature">
+                    <span className="feature-label">Instrumentalness</span>
+                    <div className="feature-bar">
+                      <div className="feature-fill" style={{ width: `${result.features.instrumentalness * 100}%` }}></div>
+                    </div>
+                    <span className="feature-value">{(result.features.instrumentalness * 100).toFixed(0)}%</span>
+                  </div>
+                  <div className="feature">
+                    <span className="feature-label">Liveness</span>
+                    <div className="feature-bar">
+                      <div className="feature-fill" style={{ width: `${result.features.liveness * 100}%` }}></div>
+                    </div>
+                    <span className="feature-value">{(result.features.liveness * 100).toFixed(0)}%</span>
+                  </div>
+                </div>
+
+                <div className="feature-stats">
+                  <div className="stat-item">
+                    <span className="stat-label">Tempo</span>
+                    <span className="stat-value">{result.features.tempo?.toFixed(0) || 'N/A'} BPM</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Loudness</span>
+                    <span className="stat-value">{result.features.loudness?.toFixed(1) || 'N/A'} dB</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Key</span>
+                    <span className="stat-value">
+                      {['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'][result.features.key] || 'N/A'}
+                      {' '}{result.features.mode === 1 ? 'Major' : 'Minor'}
+                    </span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Duration</span>
+                    <span className="stat-value">
+                      {result.features.duration_ms 
+                        ? `${Math.floor(result.features.duration_ms / 60000)}:${String(Math.floor((result.features.duration_ms % 60000) / 1000)).padStart(2, '0')}`
+                        : 'N/A'}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div className="result-actions">
-                <button className="btn primary" onClick={resetForm}>
-                  Analyze Another Song
-                </button>
-                <button className="btn" onClick={resetForm}>
-                  Clear
-                </button>
-              </div>
+              {/* Extended Features Display */}
+              {result.features._all_features && (
+                <div className="extended-features">
+                  <h4>🔬 Extended Analysis ({result.features._feature_count} features extracted)</h4>
+                  <div className="extended-features-grid">
+                    {/* Spectral Features */}
+                    <div className="feature-group">
+                      <h5>📊 Spectral Analysis</h5>
+                      <div className="feature-list">
+                        <div className="ext-feature"><span>Centroid</span><span>{result.features._all_features.spectral_centroid_hz?.toFixed(0)} Hz</span></div>
+                        <div className="ext-feature"><span>Bandwidth</span><span>{result.features._all_features.spectral_bandwidth_hz?.toFixed(0)} Hz</span></div>
+                        <div className="ext-feature"><span>Rolloff</span><span>{result.features._all_features.spectral_rolloff_hz?.toFixed(0)} Hz</span></div>
+                        <div className="ext-feature"><span>Flatness</span><span>{(result.features._all_features.spectral_flatness_mean * 100)?.toFixed(2)}%</span></div>
+                      </div>
+                    </div>
+
+                    {/* Rhythm Analysis */}
+                    <div className="feature-group">
+                      <h5>🥁 Rhythm Analysis</h5>
+                      <div className="feature-list">
+                        <div className="ext-feature"><span>Beat Count</span><span>{result.features._all_features.beat_count}</span></div>
+                        <div className="ext-feature"><span>Beat Regularity</span><span>{(result.features._all_features.beat_regularity * 100)?.toFixed(1)}%</span></div>
+                        <div className="ext-feature"><span>Rhythm Strength</span><span>{(result.features._all_features.rhythm_strength * 100)?.toFixed(1)}%</span></div>
+                        <div className="ext-feature"><span>Onset Strength</span><span>{result.features._all_features.onset_strength_mean?.toFixed(2)}</span></div>
+                      </div>
+                    </div>
+
+                    {/* Harmonic Analysis */}
+                    <div className="feature-group">
+                      <h5>🎼 Harmonic Analysis</h5>
+                      <div className="feature-list">
+                        <div className="ext-feature"><span>Key</span><span>{result.features._all_features.key_name} ({result.features._all_features.mode_name})</span></div>
+                        <div className="ext-feature"><span>Key Strength</span><span>{(result.features._all_features.key_strength * 100)?.toFixed(1)}%</span></div>
+                        <div className="ext-feature"><span>Harmonic Ratio</span><span>{(result.features._all_features.harmonic_ratio * 100)?.toFixed(1)}%</span></div>
+                        <div className="ext-feature"><span>Tonnetz Mean</span><span>{result.features._all_features.tonnetz_mean?.toFixed(4)}</span></div>
+                      </div>
+                    </div>
+
+                    {/* Energy Analysis */}
+                    <div className="feature-group">
+                      <h5>⚡ Energy Analysis</h5>
+                      <div className="feature-list">
+                        <div className="ext-feature"><span>RMS Mean</span><span>{result.features._all_features.rms_mean?.toFixed(4)}</span></div>
+                        <div className="ext-feature"><span>Dynamic Range</span><span>{result.features._all_features.dynamic_range?.toFixed(2)}</span></div>
+                        <div className="ext-feature"><span>Loudness Raw</span><span>{result.features._all_features.loudness_raw_db?.toFixed(1)} dB</span></div>
+                        <div className="ext-feature"><span>ZCR</span><span>{result.features._all_features.zero_crossing_rate?.toFixed(4)}</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* MFCC Visualization */}
+                  <div className="mfcc-section">
+                    <h5>🎤 MFCC Coefficients (Timbral Texture)</h5>
+                    <div className="mfcc-bars">
+                      {[...Array(20)].map((_, i) => {
+                        const mfccVal = result.features._all_features[`mfcc_${i+1}`] || 0
+                        const normalized = Math.min(100, Math.max(0, (mfccVal + 50) * 1.5))
+                        return (
+                          <div key={i} className="mfcc-bar-container">
+                            <div 
+                              className="mfcc-bar" 
+                              style={{ height: `${normalized}%`, background: `hsl(${280 - i * 12}, 70%, 50%)` }}
+                            ></div>
+                            <span className="mfcc-label">{i+1}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  <p className="feature-note">
+                    ⚠️ Note: Librosa extracts raw audio features. Spotify uses proprietary ML algorithms trained on millions of songs, 
+                    so values may differ from Spotify's API. Our calibration attempts to approximate Spotify's definitions.
+                  </p>
+                </div>
+              )}
             </div>
+
+            <button className="btn secondary" onClick={resetForm}>
+              Test Another Song
+            </button>
           </div>
         )}
       </div>
