@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import './LiveSongTest.css'
+import { API_BASE_URL } from '../config/api'
 
 export default function LiveSongTestIntegrated() {
   const [file, setFile] = useState(null)
@@ -10,9 +11,6 @@ export default function LiveSongTestIntegrated() {
   const [dragActive, setDragActive] = useState(false)
   const [error, setError] = useState(null)
   const [progress, setProgress] = useState(0)
-
-  // Configure API URL - can be customized via environment variable
-  const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL ? window.BACKEND_URL : 'http://localhost:5001'
 
   const handleDrag = (e) => {
     e.preventDefault()
@@ -67,7 +65,7 @@ export default function LiveSongTestIntegrated() {
       formData.append('file', file)
 
       // Upload and analyze
-      const response = await fetch(`${API_BASE_URL}/upload-analyze`, {
+      const response = await fetch(`${API_BASE_URL}/api/analyze-audio`, {
         method: 'POST',
         body: formData,
         // Don't set Content-Type, let browser set it with boundary

@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
-
-const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL ? window.BACKEND_URL : 'http://localhost:5001'
+import { API_BASE_URL } from '../config/api'
 
 const DEFAULTS = {
   danceability: 0.65,
@@ -29,7 +28,7 @@ export default function PredictorForm({onResult}){
   useEffect(() => {
     const checkBackend = async () => {
       try {
-        const resp = await fetch(`${BACKEND_URL}/api/health`, { method: 'GET' })
+        const resp = await fetch(`${API_BASE_URL}/api/health`, { method: 'GET' })
         setBackendStatus(resp.ok)
       } catch (err) {
         setBackendStatus(false)
@@ -55,7 +54,7 @@ export default function PredictorForm({onResult}){
     setError(null)
     try{
       // Backend is required for predictions
-      const resp = await fetch(`${BACKEND_URL}/api/predict`,{
+      const resp = await fetch(`${API_BASE_URL}/api/predict`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(form)
@@ -70,7 +69,7 @@ export default function PredictorForm({onResult}){
       // Get improvement suggestions
       let suggestions = []
       try {
-        const sugResp = await fetch(`${BACKEND_URL}/api/suggest-improvements`, {
+        const sugResp = await fetch(`${API_BASE_URL}/api/suggest-improvements`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(form)

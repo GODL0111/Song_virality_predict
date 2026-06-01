@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import './LiveSongTest.css'
-
-const BACKEND_URL = typeof window !== 'undefined' && window.BACKEND_URL ? window.BACKEND_URL : 'http://localhost:5001'
+import { API_BASE_URL } from '../config/api'
 
 export default function LiveSongTest() {
   const [file, setFile] = useState(null)
@@ -56,7 +55,7 @@ export default function LiveSongTest() {
       formData.append('file', file)
 
       // Upload and analyze with backend
-      const response = await fetch(`${BACKEND_URL}/api/analyze-audio`, {
+      const response = await fetch(`${API_BASE_URL}/api/analyze-audio`, {
         method: 'POST',
         body: formData
       })
