@@ -1,0 +1,24 @@
+{
+  "model_type": "smote_balanced_ensemble",
+  "accuracy": 0.6255230914231856,
+  "auc": 0.7016079051057427,
+  "recall": 0.6845332278481012,
+  "precision": 0.29332994321552674,
+  "hit_mean_prob": 0.5370471281113223,
+  "non_hit_mean_prob": 0.4340800923375207,
+  "training_samples": 200382,
+  "features": [
+    "danceability",
+    "energy",
+    "key",
+    "loudness",
+    "mode",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "duration_ms"
+  ]
+}

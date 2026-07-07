@@ -1,0 +1,92 @@
+@import './LiveSongTest.css';
+
+.live-recording {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+}
+
+.record-area {
+  background: var(--card-bg, white);
+  border: 2px dashed var(--primary, #ff7ab6);
+  border-radius: 16px;
+  padding: 60px 30px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.record-area.recording {
+  border-color: #ff3366;
+  background: rgba(255, 51, 102, 0.05);
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.2);
+}
+
+.record-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.record-icon {
+  font-size: 4rem;
+  margin-bottom: 10px;
+}
+
+.record-icon.pulse {
+  animation: pulse-animation 1s infinite;
+  color: #ff3366;
+}
+
+@keyframes pulse-animation {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.timer {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--text-primary, #1a1a1a);
+  margin: 10px 0;
+}
+
+[data-theme="dark"] .timer {
+  color: #ffffff;
+}
+
+.audio-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.audio-preview audio {
+  width: 100%;
+  max-width: 400px;
+  outline: none;
+}
+
+.btn.danger {
+  background: linear-gradient(135deg, #ff3366, #ff0033);
+  color: white;
+  border: none;
+}
+
+.btn.danger:hover {
+  box-shadow: 0 8px 20px rgba(255, 51, 102, 0.4);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}

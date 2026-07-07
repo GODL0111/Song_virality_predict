@@ -1,0 +1,71 @@
+:root{
+  --bg:#0f1724;
+  --card:#0b1220;
+  --accent:#ff7ab6;
+  --muted:#9aa4b2;
+}
+*{box-sizing:border-box;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+body{margin:0;background:linear-gradient(180deg,#071029 0%, #071a2a 100%);color:#e6eef6}
+.app-root{min-height:100vh;display:flex;flex-direction:column}
+.hero{padding:28px;text-align:center}
+.hero h1{margin:0;font-size:32px}
+.container{display:flex;gap:20px;padding:20px;align-items:flex-start}
+.left{flex:1}
+.right{width:320px}
+.card{background:rgba(255,255,255,0.03);padding:18px;border-radius:12px;margin-bottom:16px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-grid label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:6px}
+.form-grid label .value{font-weight:700;color:#ff7ab6;font-size:12px;display:inline-block}
+.form-grid .form-group{grid-column:1/-1}
+.form-group label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);margin-bottom:8px}
+.form-group label .required{color:#ff6b6b;font-weight:700}
+.song-name-input{padding:10px;border-radius:6px;border:1px solid rgba(255,122,182,0.3);background:#071828;color:#e6eef6;font-size:14px;transition:border-color 0.2s}
+.song-name-input:focus{outline:none;border-color:#ff7ab6;box-shadow:0 0 8px rgba(255,122,182,0.2)}
+.song-name-input::placeholder{color:var(--muted)}
+input[type=range]{width:100%}
+input[type=number]{padding:8px;border-radius:6px;border:none;background:#071828;color:#e6eef6}
+.actions{grid-column:1/-1;display:flex;gap:8px;margin-top:8px}
+.btn{padding:10px 12px;border-radius:8px;border:none;cursor:pointer;transition:all 0.2s}
+.btn.primary{background:linear-gradient(90deg,#ff6aa6,#ffb86b);color:#081221;font-weight:700}
+.btn.primary:disabled{opacity:0.5;cursor:not-allowed}
+.result{margin-top:12px}
+.footer{text-align:center;padding:12px;color:var(--muted)}
+.score{font-size:20px;margin-bottom:12px}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badges.compact{gap:6px}
+.badge{padding:8px;border-radius:8px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.02)}
+.badge.compact{padding:6px;font-size:12px}
+.badge.locked{opacity:0.35}
+.badge-emoji{font-size:20px}
+.badge.compact .badge-emoji{font-size:16px}
+.muted{color:var(--muted);font-size:12px;margin-left:8px}
+.log{margin-top:12px}
+.log.compact h3{font-size:14px;margin:8px 0}
+.log.compact ul{list-style:none;padding:0;margin:0}
+.log.compact li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px}
+.attempt-log{display:flex;justify-content:space-between;align-items:center}
+.attempt-log .song-name{flex:1;color:#e6eef6;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.attempt-log .attempt-stats{display:flex;gap:8px;align-items:center}
+.attempt-log .attempt-stats strong{color:#ff7ab6;font-weight:700}
+.attempt-log .points{background:rgba(76,175,80,0.2);color:#76c844;padding:2px 6px;border-radius:4px;font-size:11px;white-space:nowrap}
+.empty-state{color:var(--muted);font-size:12px;margin:8px 0}
+.card-quiet{margin-top:12px;background:transparent;color:var(--muted);font-size:13px}
+.card-quiet.small{font-size:11px}
+.compact-hub{max-width:320px}
+.log-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.log-header h3{margin:0;font-size:14px}
+.toggle-all-btn{background:none;border:none;color:#ff7ab6;cursor:pointer;font-size:12px;padding:4px 8px;transition:all 0.2s;border-radius:4px}
+.toggle-all-btn:hover{background:rgba(255,122,182,0.15)}
+.song-info{flex:1;overflow:hidden}
+.song-name{color:#e6eef6;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.song-score{color:#ff7ab6;font-weight:700;font-size:13px}
+.attempt-log .attempt-points{display:flex;align-items:center}
+
+/* confetti */
+.confetti{position:fixed;left:50%;top:20%;transform:translateX(-50%);font-size:28px;pointer-events:none;z-index:9999}
+
+@media(max-width:900px){
+  .container{flex-direction:column}
+  .right{width:auto}
+  .compact-hub{max-width:100%}
+}

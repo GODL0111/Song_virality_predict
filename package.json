@@ -1,0 +1,16 @@
+{
+  "name": "song-virality-predict",
+  "version": "1.0.0",
+  "description": "Song virality prediction with ML backend and React frontend",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd frontend && npm run preview",
+    "install:frontend": "cd frontend && npm install"
+  },
+  "keywords": ["music", "prediction", "ml", "vercel"],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

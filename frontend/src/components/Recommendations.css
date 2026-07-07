@@ -1,0 +1,399 @@
+/* Recommendations Styles */
+
+.recommendations {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  animation: fadeIn 0.6s ease;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.recommendations-container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  width: 100%;
+}
+
+.recommendations-section,
+.tips-section,
+.success-section {
+  animation: fadeIn 0.6s ease;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 40px;
+  margin-bottom: 40px;
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #ffffff 0%, #b0b0d0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+}
+
+[data-theme="light"] .section-title {
+  background: linear-gradient(135deg, #667eea 0%, #ff6b9d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========== RECOMMENDATIONS GRID ========== */
+
+.recommendations-grid {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px 0;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+.recommendations-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.recommendations-grid::-webkit-scrollbar-track {
+  background: rgba(255, 122, 182, 0.05);
+  border-radius: 10px;
+}
+
+.recommendations-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 122, 182, 0.3);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.recommendations-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 122, 182, 0.6);
+}
+
+.recommendation-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 122, 182, 0.15);
+  border-radius: 14px;
+  padding: 32px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255, 122, 182, 0.1);
+  flex: 0 0 calc(33.333% - 14px);
+  min-width: 300px;
+  scroll-snap-align: start;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 122, 182, 0.4);
+  box-shadow: 0 12px 30px rgba(255, 122, 182, 0.1);
+  background: rgba(20, 20, 40, 0.95);
+}
+
+.rec-icon {
+  display: none;
+}
+
+.recommendation-card h4 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.recommendation-card p {
+  color: #8a8aaa;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.impact-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.impact-badge[data-impact="high"] {
+  background: rgba(255, 122, 182, 0.2);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.impact-badge[data-impact="medium"] {
+  background: rgba(102, 126, 234, 0.2);
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+}
+
+.impact-badge[data-impact="low"] {
+  background: rgba(100, 181, 246, 0.2);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+/* ========== TIPS GRID ========== */
+
+.tips-grid {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px 0;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+.tips-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.tips-grid::-webkit-scrollbar-track {
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 10px;
+}
+
+.tips-grid::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.3);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.tips-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.6);
+}
+
+.tip-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 12px;
+  padding: 25px;
+  transition: all 0.3s ease;
+  flex: 0 0 calc(25% - 15px);
+  min-width: 280px;
+  scroll-snap-align: start;
+}
+
+.tip-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--secondary);
+  box-shadow: 0 15px 30px rgba(102, 126, 234, 0.1);
+}
+
+.tip-category {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: var(--secondary);
+  font-weight: 700;
+}
+
+.tip-list {
+  list-style: none;
+  padding: 0;
+}
+
+.tip-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tip-list li:last-child {
+  margin-bottom: 0;
+}
+
+.checkmark {
+  color: var(--primary);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ========== SUCCESS GRID ========== */
+
+.success-grid {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 20px 0;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+.success-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.success-grid::-webkit-scrollbar-track {
+  background: rgba(255, 122, 182, 0.05);
+  border-radius: 10px;
+}
+
+.success-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 122, 182, 0.3);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.success-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 122, 182, 0.6);
+}
+
+.success-card {
+  background: linear-gradient(135deg, rgba(255, 122, 182, 0.1), rgba(102, 126, 234, 0.1));
+  border: 1px solid rgba(255, 122, 182, 0.2);
+  border-radius: 12px;
+  padding: 30px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  flex: 0 0 calc(25% - 15px);
+  min-width: 220px;
+  scroll-snap-align: start;
+}
+
+.success-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  background: linear-gradient(135deg, rgba(255, 122, 182, 0.15), rgba(102, 126, 234, 0.15));
+  box-shadow: 0 20px 40px rgba(255, 122, 182, 0.1);
+}
+
+.success-number {
+  font-size: 48px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.success-card p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ========== ANIMATIONS ========== */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 22px;
+  }
+
+  .recommendation-card {
+    flex: 0 0 calc(50% - 10px);
+    min-width: 250px;
+    padding: 24px;
+  }
+
+  .tip-card {
+    flex: 0 0 calc(50% - 10px);
+    min-width: 240px;
+    padding: 20px;
+  }
+
+  .success-card {
+    flex: 0 0 calc(50% - 10px);
+    min-width: 200px;
+    padding: 24px 16px;
+  }
+
+  .success-number {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 18px;
+  }
+
+  .recommendation-card {
+    flex: 0 0 calc(100% - 10px);
+    min-width: 280px;
+    padding: 20px;
+  }
+
+  .tip-card {
+    flex: 0 0 calc(100% - 10px);
+    min-width: 260px;
+    padding: 16px;
+  }
+
+  .success-card {
+    flex: 0 0 calc(100% - 10px);
+    min-width: 240px;
+    padding: 20px 12px;
+  }
+
+  .recommendations-container {
+    gap: 30px;
+  }
+
+  .rec-icon {
+    font-size: 40px;
+  }
+
+  .recommendation-card h4 {
+    font-size: 16px;
+  }
+
+  .tip-category {
+    font-size: 16px;
+  }
+
+  .success-number {
+    font-size: 32px;
+  }
+}

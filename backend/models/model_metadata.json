@@ -1,0 +1,111 @@
+{
+  "model_type": "Ensemble (XGBoost + RandomForest + LogisticRegression)",
+  "training_date": "2025-12-21T22:33:27.520863",
+  "training_time_seconds": 22.055999,
+  "data_source": "unified_pipeline",
+  "datasets_combined": [
+    "dataset.csv",
+    "spotify_songs.csv",
+    "spotify_tracks.csv"
+  ],
+  "total_samples": 176832,
+  "train_samples": 123782,
+  "test_samples": 26525,
+  "val_samples": 26525,
+  "feature_names": [
+    "danceability",
+    "energy",
+    "key",
+    "loudness",
+    "mode",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "duration_ms"
+  ],
+  "metrics": {
+    "pipeline_stats": {
+      "dataset.csv_records": 114000,
+      "spotify_songs.csv_records": 32833,
+      "spotify_tracks.csv_records": 62317,
+      "combined_total": 209150,
+      "duplicates_removed": 32318,
+      "unique_tracks": 176832,
+      "after_cleaning": 176832,
+      "rows_with_missing": 0,
+      "non_hits": 143130,
+      "hits": 33702,
+      "hit_threshold": 50,
+      "train_samples": 123782,
+      "test_samples": 26525,
+      "val_samples": 26525,
+      "features_used": [
+        "danceability",
+        "energy",
+        "key",
+        "loudness",
+        "mode",
+        "speechiness",
+        "acousticness",
+        "instrumentalness",
+        "liveness",
+        "valence",
+        "tempo",
+        "duration_ms"
+      ]
+    },
+    "xgboost": {
+      "accuracy": 0.6874646559849199,
+      "auc": 0.7151487346562693,
+      "precision": 0.32427733101499673,
+      "recall": 0.5901898734177216,
+      "f1": 0.41857202973769114
+    },
+    "random_forest": {
+      "accuracy": 0.6860697455230914,
+      "auc": 0.7099314313440457,
+      "precision": 0.32060984973127127,
+      "recall": 0.578125,
+      "f1": 0.41247442319904043
+    },
+    "logistic_regression": {
+      "accuracy": 0.8093496701225259,
+      "auc": 0.6319281525142817,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "ensemble": {
+      "accuracy": 0.7467295004712535,
+      "auc": 0.717044586218221,
+      "precision": 0.35995955510616784,
+      "recall": 0.4224683544303797,
+      "f1": 0.3887170154686078,
+      "confusion_matrix": [
+        [
+          17671,
+          3798
+        ],
+        [
+          2920,
+          2136
+        ]
+      ]
+    },
+    "validation": {
+      "accuracy": 0.7160037700282752,
+      "auc": 0.7169167890972936
+    }
+  },
+  "ensemble_weights": {
+    "xgboost": 4,
+    "random_forest": 4,
+    "logistic_regression": 2
+  },
+  "hit_threshold": 50,
+  "bias_correction": "enabled",
+  "version": "2.0.0"
+}

@@ -1,0 +1,30 @@
+{
+  "dataset.csv_records": 114000,
+  "spotify_songs.csv_records": 32833,
+  "spotify_tracks.csv_records": 62317,
+  "combined_total": 209150,
+  "duplicates_removed": 32318,
+  "unique_tracks": 176832,
+  "after_cleaning": 176832,
+  "rows_with_missing": 0,
+  "non_hits": 143130,
+  "hits": 33702,
+  "hit_threshold": 50,
+  "train_samples": 123782,
+  "test_samples": 26525,
+  "val_samples": 26525,
+  "features_used": [
+    "danceability",
+    "energy",
+    "key",
+    "loudness",
+    "mode",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "duration_ms"
+  ]
+}

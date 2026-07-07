@@ -1,0 +1,3 @@
+# Vercel Python Runtime Dependencies
+# Minimal dependencies for serverless functions
+numpy>=1.23.0
