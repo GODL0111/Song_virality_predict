@@ -90,9 +90,9 @@ export default function LiveSongTest() {
       const formData = new FormData()
       formData.append('file', file)
 
-      // Add 120-second timeout (matches gunicorn backend timeout)
+      // Add 300-second timeout (5 minutes) to account for Render cold starts and slow upload speeds
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(new Error(`Request timed out trying to reach ${BACKEND_URL || 'Vercel'}. Please check if VITE_API_URL is set correctly in Vercel.`)), 120000)
+      const timeoutId = setTimeout(() => controller.abort(new Error(`Request timed out trying to reach ${BACKEND_URL || 'Vercel'}. Please check if VITE_API_URL is set correctly in Vercel.`)), 300000)
 
       // Upload and analyze with backend
       const response = await fetch(`${BACKEND_URL}/api/analyze-audio`, {
