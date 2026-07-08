@@ -3,6 +3,8 @@ import { GoogleLogin } from '@react-oauth/google'
 import { jwtDecode } from 'jwt-decode'
 import './Auth.css'
 
+const BACKEND_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? '' : 'http://localhost:5000');
+
 export default function Signup({ onSignup, onSwitchToLogin, isDarkMode, onToggleTheme }) {
   const [formData, setFormData] = useState({
     username: '',
@@ -32,7 +34,7 @@ export default function Signup({ onSignup, onSwitchToLogin, isDarkMode, onToggle
     setError('')
 
     try {
-      const response = await fetch('http://localhost:5000/api/signup', {
+      const response = await fetch(`${BACKEND_URL}/api/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -60,7 +62,7 @@ export default function Signup({ onSignup, onSwitchToLogin, isDarkMode, onToggle
     setError('');
     try {
       const decoded = jwtDecode(credentialResponse.credential);
-      const response = await fetch('http://localhost:5000/api/google-login', {
+      const response = await fetch(`${BACKEND_URL}/api/google-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

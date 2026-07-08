@@ -4,10 +4,70 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Song Virality Game</title>
-    <script type="module" crossorigin src="/assets/index-9XsCP5rD.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-Cz7619Pp.css">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { 
+        background: #0f1724; 
+        color: #e6eef6; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #root {
+        width: 100%;
+        min-height: 100vh;
+      }
+      .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        gap: 20px;
+        font-size: 24px;
+      }
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 122, 182, 0.2);
+        border-top-color: #ff7ab6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      .error {
+        background: #ff6b6b;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 600px;
+        font-family: monospace;
+        font-size: 14px;
+        white-space: pre-wrap;
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-WAHrALqY.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Bx2ayEsO.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div>Loading App...</div>
+      </div>
+    </div>
+    <script>
+      // Show error if not loaded in 5 seconds
+      setTimeout(() => {
+        const root = document.getElementById('root');
+        if (root.innerHTML.includes('spinner')) {
+          root.innerHTML = '<div class="error">ERROR: App failed to load.\n\nCheck browser console for details.</div>';
+        }
+      }, 5000);
+    </script>
   </body>
 </html>
