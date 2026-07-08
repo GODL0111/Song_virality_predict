@@ -86,8 +86,8 @@ app = Flask(__name__)
 frontend_url = os.environ.get('FRONTEND_URL', '*')
 CORS(app, origins=[frontend_url] if frontend_url != '*' else '*')
 
-# Security: Max upload size 15MB
-app.config['MAX_CONTENT_LENGTH'] = 15 * 1024 * 1024 
+# Security: Max upload size 50MB to match frontend limits
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 
 
 # Security: Rate Limiting
 limiter = Limiter(
