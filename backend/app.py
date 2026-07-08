@@ -188,7 +188,8 @@ def extract_audio_features(audio_file):
         if len(y) == 0:
             raise ValueError("Empty audio file")
             
-        true_duration = librosa.get_duration(path=audio_file)
+        import soundfile as sf
+        true_duration = sf.info(audio_file).duration
         return extract_features_from_array(y, sr, true_duration_sec=true_duration)
     except Exception as e:
         logger.error(f"Error extracting features from {audio_file}: {e}")
@@ -688,8 +689,9 @@ def analyze_audio():
             audio_file.save(tmp.name)
             temp_path = tmp.name
         
-        # Get true duration first for feature calculation
-        true_duration_sec = librosa.get_duration(path=temp_path)
+        # Get true duration first for feature calculation using soundfile (more reliable than librosa.get_duration)
+        import soundfile as sf
+        true_duration_sec = sf.info(temp_path).duration
         
         # Extract features from up to 30 seconds of audio to prevent Render timeouts/OOM
         y, sr = librosa.load(temp_path, sr=22050, mono=True, duration=30.0)

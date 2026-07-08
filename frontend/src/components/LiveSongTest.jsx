@@ -92,7 +92,7 @@ export default function LiveSongTest() {
 
       // Add 120-second timeout (matches gunicorn backend timeout)
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(new Error('Request timed out. The server took too long to respond.')), 120000)
+      const timeoutId = setTimeout(() => controller.abort(new Error(`Request timed out trying to reach ${BACKEND_URL || 'Vercel'}. Please check if VITE_API_URL is set correctly in Vercel.`)), 120000)
 
       // Upload and analyze with backend
       const response = await fetch(`${BACKEND_URL}/api/analyze-audio`, {
