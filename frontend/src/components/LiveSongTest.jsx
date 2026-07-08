@@ -90,11 +90,18 @@ export default function LiveSongTest() {
       const formData = new FormData()
       formData.append('file', file)
 
+      // Add 60-second timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 60000)
+
       // Upload and analyze with backend
       const response = await fetch(`${BACKEND_URL}/api/analyze-audio`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        signal: controller.signal
       })
+      
+      clearTimeout(timeoutId)
 
       clearTimeout(step2Timer)
       clearTimeout(step3Timer)
