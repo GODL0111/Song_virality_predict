@@ -188,7 +188,8 @@ def extract_audio_features(audio_file):
         if len(y) == 0:
             raise ValueError("Empty audio file")
             
-        return extract_features_from_array(y, sr)
+        true_duration = librosa.get_duration(path=audio_file)
+        return extract_features_from_array(y, sr, true_duration_sec=true_duration)
     except Exception as e:
         logger.error(f"Error extracting features from {audio_file}: {e}")
         import traceback
@@ -196,7 +197,7 @@ def extract_audio_features(audio_file):
         return None
 
 
-def extract_features_from_array(y, sr):
+def extract_features_from_array(y, sr, true_duration_sec=None):
     """
     Extract features directly from a loaded audio array.
     """
@@ -206,7 +207,7 @@ def extract_features_from_array(y, sr):
         all_features = {}  # Store all extracted features for display
         
         # === DURATION (milliseconds) - Direct measurement ===
-        duration_sec = librosa.get_duration(y=y, sr=sr)
+        duration_sec = true_duration_sec if true_duration_sec is not None else librosa.get_duration(y=y, sr=sr)
         features['duration_ms'] = int(duration_sec * 1000)
         all_features['duration_sec'] = round(float(duration_sec), 2)
         
@@ -687,12 +688,15 @@ def analyze_audio():
             audio_file.save(tmp.name)
             temp_path = tmp.name
         
-        # Extract FULL features from audio
-        y, sr = librosa.load(temp_path, sr=22050, mono=True)
+        # Get true duration first for feature calculation
+        true_duration_sec = librosa.get_duration(path=temp_path)
+        
+        # Extract features from up to 60 seconds of audio to prevent Render timeouts/OOM
+        y, sr = librosa.load(temp_path, sr=22050, mono=True, duration=60.0)
         if len(y) == 0:
             raise ValueError("Empty audio file")
             
-        features = extract_features_from_array(y, sr)
+        features = extract_features_from_array(y, sr, true_duration_sec=true_duration_sec)
         
         # Add target_year if provided
         target_year = request.form.get('target_year', type=int)
@@ -737,7 +741,7 @@ def analyze_audio():
             'model_version': getattr(predictor, 'model_metadata', {}).get('version', '1.0.0'),
             'features': features,
             'prescriptions': prescriptions,
-            'total_duration_sec': librosa.get_duration(y=y, sr=sr),
+            'total_duration_sec': true_duration_sec,
             'analysisId': analysis_id
         })
         
