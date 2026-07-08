@@ -90,9 +90,9 @@ export default function LiveSongTest() {
       const formData = new FormData()
       formData.append('file', file)
 
-      // Add 60-second timeout
+      // Add 120-second timeout (matches gunicorn backend timeout)
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 60000)
+      const timeoutId = setTimeout(() => controller.abort(new Error('Request timed out. The server took too long to respond.')), 120000)
 
       // Upload and analyze with backend
       const response = await fetch(`${BACKEND_URL}/api/analyze-audio`, {
