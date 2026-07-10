@@ -65,7 +65,7 @@ export default function Auth({ onLogin }) {
     return null
   }
 
-  const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID_HERE" // REPLACE THIS with your actual Google Client ID
+  const GOOGLE_CLIENT_ID = "627390059882-dnp1bqaj69cvjrfenmbjhm339tsmlion.apps.googleusercontent.com" // REPLACE THIS with your actual Google Client ID
 
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
